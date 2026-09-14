@@ -1,0 +1,279 @@
+<div class="header-sec mk">
+    <div class="header-sec-container">
+        <a href="#">
+            <img src="{{ 'burger.png' | asset_url }}" alt="image" width="35px" height="27px" class="burgercina">
+        </a>
+
+        <a href="https://pureparfum.nl/">
+            <img src="{{ 'logo-nav.png' | asset_url }}" alt="image" width="auto" height="27px" class="logo-navcina">
+        </a>
+
+
+        <div class="navcina">
+           <button type="button" class="searchina-btn" id="open-search">
+  <img src="{{ 'search.png' | asset_url }}" alt="Search" width="28px" height="28px" class="searchina" />
+</button>
+
+            <a href="/cart">
+                <img src="{{ 'cart.png' | asset_url }}" alt="image" width="35px" height="35px" class="cart-2">
+            </a>
+        </div>
+    </div>
+    <div class="clockcina-div">
+        <img src="{{ 'clock-full.png' | asset_url }}" alt="image" width="20px" height="20px" class="clockcina">
+        <span>Bestel vóór 15:00 uur voor levering de volgende dag</span>
+    </div>
+</div>
+
+<div id="side-menu" class="side-menu">
+  <div class="side-menu-header">
+    <img src="{{ 'logo-nav.png' | asset_url }}" alt="image" width="auto" height="18px" class="logo-navcina">
+    <button id="close-menu" class="close-btn">×</button>
+  </div>
+  <ul class="side-menu-links">
+    <li><a href="https://pureparfum.nl/collections/vrouwen-parfums">Vrouwen Parfums</a></li>
+    <li><a href="https://pureparfum.nl/collections/mannen-parfums">Mannen Parfums</a></li>
+    <li><a href="https://pureparfum.nl/collections/unisex-parfums">Unisex Parfums</a></li>
+    <li><a href="https://pureparfum.nl/pages/tevreden-klanten">Tevreden klanten</a></li>
+  </ul>
+</div>
+<div id="overlay" class="side-overlay"></div>
+
+
+<!-- Search Overlay -->
+<div id="search-overlay" class="search-overlay">
+  <div class="search-popup">
+    <button id="close-search" class="close-search">&times;</button>
+    <h2>Zoek naar parfums</h2>
+    <form action="/search" method="get" class="search-form">
+      <input
+        type="search"
+        name="q"
+        placeholder="Zoek parfums..."
+        class="search-input"
+        autofocus
+      />
+    </form>
+  </div>
+</div>
+
+<style>
+
+  .side-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .side-menu {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  max-width:400px;
+      max-width: 400px;
+    width: 100%;
+    height: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 1001;
+  padding: 20px;
+  transition: left 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+}
+
+.side-menu.active {
+  left: 0;
+}
+
+.side-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+}
+
+.side-overlay.active {
+  display: block;
+}
+
+.close-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  float: right;
+  cursor: pointer;
+}
+
+.side-menu-links {
+  list-style: none;
+  padding: 20px 0;
+}
+
+.side-menu-links li {
+  margin: 24px 0;
+}
+
+.side-menu-links a {
+  text-decoration: none;
+  color: #000;
+  font-family: "Geist";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+  @media(max-width:599px) {
+    .side-menu-links a {
+      font-size: 16px;
+    }
+
+    .side-menu {
+      max-width:220px;
+    }
+  }
+
+
+  .search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+    padding: 24px;
+}
+
+.search-overlay.active {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.search-popup {
+  background: #fff;
+  padding: 18px;
+  border-radius: 9px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  transform: translateY(-20px);
+  opacity: 0;
+  animation: slideUp 0.3s ease forwards;
+}
+
+  .search-popup h2 {
+    font-size: 18px;
+    font-family: "Geist";
+    font-weight: 500;
+    line-height: normal;
+  }
+
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: "Geist";
+}
+
+.close-search {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+  .searchina-btn {
+    outline:none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding:0;
+    margin:0;
+  }
+
+    @media(max-width:599px) {
+     .searchina-btn img {
+    height: 18px;
+       padding-top: 3px;
+  }
+  }
+  
+</style>
+
+<script>
+  const burgerBtn = document.querySelector('.burgercina');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('close-menu');
+
+  burgerBtn.addEventListener('click', () => {
+    sideMenu.classList.add('active');
+    overlay.classList.add('active');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  });
+
+  overlay.addEventListener('click', () => {
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  });
+
+    const openSearchBtn = document.getElementById("open-search");
+  const closeSearchBtn = document.getElementById("close-search");
+  const searchOverlay = document.getElementById("search-overlay");
+
+  openSearchBtn.addEventListener("click", () => {
+    searchOverlay.classList.add("active");
+    setTimeout(() => {
+      const input = searchOverlay.querySelector("input[type='search']");
+      if (input) input.focus();
+    }, 300);
+  });
+
+  closeSearchBtn.addEventListener("click", () => {
+    searchOverlay.classList.remove("active");
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchOverlay.classList.remove("active");
+    }
+  });
+
+  searchOverlay.addEventListener("click", (e) => {
+    if (e.target === searchOverlay) {
+      searchOverlay.classList.remove("active");
+    }
+  });
+</script>

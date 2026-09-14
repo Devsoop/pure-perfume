@@ -1,0 +1,251 @@
+<div
+  class="listicle-page-hero"
+  style="
+    --padding-top-desktop: {{ section.settings.padding_top }}px;
+    --padding-bottom-desktop: {{ section.settings.padding_bottom }}px;
+    --padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --background-color: {{ section.settings.background_color }};
+    --title-color: {{ section.settings.title_color }};
+    --title-accent-color: {{ section.settings.title_accent_color }};
+    --text-color: {{ section.settings.text_background }};
+  "
+>
+  <div class="listicle-page-hero__container">
+    <div class="listicle-page-hero__layout">
+      <div class="listicle-page-hero__text">
+        {% if section.settings.title != blank %}
+          <h3>{{ section.settings.title }}</h3>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <p>{{ section.settings.text }}</p>
+        {% endif %}
+      </div>
+      <div class="listicle-page-hero__image">
+        {% if section.settings.image != blank %}
+          <img
+            src="{{ section.settings.image | image_url }}"
+            width="239"
+            height="263"
+            alt="{{ section.settings.title | strip_html | escape }}"
+          >
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .listicle-page-hero {
+    padding-top: var(--padding-top-mobile);
+    padding-bottom: var(--padding-bottom-mobile);
+    background-color: var(--background-color);
+  }
+
+  @media screen and (min-width: 768px) {
+    .listicle-page-hero {
+      padding-top: var(--padding-top-desktop);
+      padding-bottom: var(--padding-bottom-desktop);
+    }
+  }
+
+  .listicle-page-hero__container {
+    width: 100%;
+    max-width: 1320px;
+    padding-inline: 20px;
+    margin: 0 auto;
+  }
+
+  .listicle-page-hero__layout {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    max-width: 871px;
+    margin: 0 auto;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-hero__layout {
+      max-width: 100%;
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+  }
+
+  .listicle-page-hero__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-hero__text {
+      gap: 8px;
+    }
+  }
+
+  .listicle-page-hero__text h3 {
+    color: var(--title-color);
+    font-family: 'Neue Haas Grotesk Display Pro';
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+    margin-block: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-hero__text h3 {
+      font-size: 20px;
+      line-height: 140%;
+    }
+  }
+
+  .listicle-page-hero__text h3 strong {
+    color: var(--title-accent-color);
+    font-weight: 600;
+  }
+
+  .listicle-page-hero__text p {
+    opacity: 75%;
+    color: var(--text-color);
+    font-family: 'Montserrat';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    margin-block: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-hero__text p {
+      font-size: 12px;
+    }
+  }
+
+  .listicle-page-hero__image img {
+    display: block;
+    object-fit: contain;
+    width: 100%;
+    height: auto;
+    max-height: 263px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-hero__image img {
+      max-height: 201px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "⚡Listicle Page Hero",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background Color",
+      "default": "#FFF3EC"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "title_accent_color",
+      "label": "Title Accent Color",
+      "default": "#FF8C49"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "header",
+      "content": "Text Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<strong>5 Redenen</strong> Waarom PureParfum de Beste Keuze is in 2025",
+      "info": "Bold the text to make it colorful."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Designer parfums kosten nu €120–200+ voor logo's en zware flessen — maar vervagen vaak binnen enkele uren. PureParfum levert parfumsterkte geïnspireerde geuren die 8–12 uur meegaan voor slechts €30. EU-gemaakt, vegan, cruelty-free, en risicoloos uit te proberen met een 30-dagen garantie."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Paddings"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "⚡Listicle Page Hero"
+    }
+  ]
+}
+{% endschema %}

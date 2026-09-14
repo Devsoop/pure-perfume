@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ page_title }}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="{{ page_description | escape }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+    <link rel="icon" href="{{ 'favikoninjara.webp' | asset_url }}" type="image/webp">
+
+     <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    {{ content_for_header }}
+    <!-- Header hook for plugins -->
+    {{ 'applicationn.css' | asset_url | stylesheet_tag }}
+    {{ 'custom.css' | asset_url | stylesheet_tag }}
+    {{ 'applicationn.js' | asset_url | script_tag }}
+  </head>
+  <body>
+    <main role="main">
+      {{ content_for_layout }}
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Geist Full Family */
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Thin.otf?v=1748003218') format('opentype');
+    font-weight: 100;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-UltraLight.otf?v=1748003217') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Light.otf?v=1748003217') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Regular.otf?v=1748003217') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Medium.otf?v=1748003217') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-SemiBold.otf?v=1748003217') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Black.otf?v=1748003217') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-Bold.otf?v=1748003217') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/Geist-UltraBlack.otf?v=1748003217') format('opentype');
+    font-weight: 950;
+    font-style: normal;
+  }
+
+  /* PPEditorial Full Family */
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-Regular.otf?v=1748003217') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-Italic.otf?v=1748003217') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-Ultrabold.otf?v=1748003218') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-UltraboldItalic.otf?v=1748003217') format('opentype');
+    font-weight: 800;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-Ultralight.otf?v=1748003217') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'PPEditorial';
+    src: url('https://cdn.shopify.com/s/files/1/0798/3530/0170/files/PPEditorialNew-UltralightItalic.otf?v=1748003218') format('opentype');
+    font-weight: 200;
+    font-style: italic;
+  }
+
+  .ppe {
+    font-family: 'PPEditorial';
+  }
+
+  .geist {
+    font-family: 'Geist';
+  }
+</style>

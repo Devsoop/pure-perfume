@@ -1,0 +1,807 @@
+{%- comment -%}
+  BUILD YOUR SET — tiered bundle builder section
+  Drop into: sections/build-your-set.liquid
+  Assign via a page template (see templates/page.build-your-set.json)
+
+  How it works:
+  - Renders products from a chosen collection as selectable cards
+  - Client-side state tracks selected variants + quantities
+  - Tier blocks define qty thresholds -> discount % + optional free gift
+  - On submit: POSTs every line (incl. unlocked gift variants) to /cart/add.js
+  - The % discount itself is applied by native Shopify AUTOMATIC discounts
+    (one per tier, scoped to the same collection, min qty = tier qty).
+    Gift products must be priced 0.00 so no second discount is needed.
+{%- endcomment -%}
+
+{%- liquid
+  assign byos_collection = collections[section.settings.collection]
+  assign filters = section.settings.filter_tags | split: ','
+-%}
+
+<section
+  class="byos"
+  data-byos
+  style="
+    --byos-bg: {{ section.settings.bg }};
+    --byos-surface: {{ section.settings.surface }};
+    --byos-border: {{ section.settings.border }};
+    --byos-text: {{ section.settings.text }};
+    --byos-muted: {{ section.settings.muted }};
+    --byos-accent: {{ section.settings.accent }};
+    --byos-accent-ink: {{ section.settings.accent_ink }};
+  "
+>
+  {%- if section.settings.heading != blank or section.settings.hero_image != blank -%}
+    <header class="byos__hero">
+      {%- if section.settings.hero_image != blank -%}
+        <div class="byos__hero-media">
+          {{
+            section.settings.hero_image
+            | image_url: width: 1600
+            | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              sizes: '(min-width: 990px) 55vw, 100vw',
+              widths: '600,900,1200,1600',
+              alt: section.settings.heading
+          }}
+        </div>
+      {%- endif -%}
+      <div class="byos__hero-copy">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="byos__eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h1 class="byos__title">
+          {{ section.settings.heading }}
+          {%- if section.settings.heading_accent != blank -%}
+            <em>{{ section.settings.heading_accent }}</em>
+          {%- endif -%}
+        </h1>
+        {%- if section.settings.subheading != blank -%}
+          <div class="byos__lede">{{ section.settings.subheading }}</div>
+        {%- endif -%}
+      </div>
+    </header>
+  {%- endif -%}
+
+  <div class="byos__body">
+    {%- if section.settings.filter_tags != blank -%}
+      <div class="byos__filters" role="tablist" aria-label="Filter products">
+        <button class="byos__filter is-active" type="button" data-byos-filter="*" role="tab" aria-selected="true">
+          {{ section.settings.filter_all_label | default: 'All' }}
+        </button>
+        {%- for tag in filters -%}
+          {%- assign clean = tag | strip -%}
+          <button
+            class="byos__filter"
+            type="button"
+            data-byos-filter="{{ clean | downcase }}"
+            role="tab"
+            aria-selected="false"
+          >
+            {{ clean }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="byos__layout">
+      <div class="byos__grid" data-byos-grid>
+        {%- for product in byos_collection.products -%}
+          {%- assign v = product.selected_or_first_available_variant -%}
+          <article
+            class="byos__card{% unless product.available %} is-soldout{% endunless %}"
+            data-byos-card
+            data-tags="{{ product.tags | join: ',' | downcase }}"
+            data-variant-id="{{ v.id }}"
+            data-price="{{ v.price }}"
+            data-title="{{ product.title | escape }}"
+            data-image="{{ product.featured_image | image_url: width: 240 }}"
+          >
+            <div class="byos__card-media">
+              {%- if product.featured_image -%}
+                {{
+                  product.featured_image
+                  | image_url: width: 600
+                  | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 20vw, 45vw', widths: '300,450,600'
+                }}
+              {%- endif -%}
+            </div>
+
+            <div class="byos__card-info">
+              <h3 class="byos__card-title">{{ product.title }}</h3>
+              {%- assign tagline = product.metafields.custom.tagline -%}
+              {%- if tagline != blank -%}
+                <p class="byos__card-tagline">{{ tagline }}</p>
+              {%- endif -%}
+
+              {%- if product.has_only_default_variant == false -%}
+                <label class="byos__visually-hidden" for="byos-var-{{ product.id }}">
+                  {{ product.options.first }}
+                </label>
+                <select class="byos__variant" id="byos-var-{{ product.id }}" data-byos-variant>
+                  {%- for variant in product.variants -%}
+                    <option
+                      value="{{ variant.id }}"
+                      data-price="{{ variant.price }}"
+                      {% unless variant.available %}
+                        disabled
+                      {% endunless %}
+                    >
+                      {{ variant.title }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
+
+              <p class="byos__card-price" data-byos-card-price>{{ v.price | money }}</p>
+            </div>
+
+            {%- if product.available -%}
+              <button class="byos__add" type="button" data-byos-add>
+                {{ section.settings.add_label | default: 'Add to set' }}
+              </button>
+              <div class="byos__stepper" data-byos-stepper hidden>
+                <button type="button" data-byos-dec aria-label="Remove one">&minus;</button>
+                <span data-byos-qty>0</span>
+                <button type="button" data-byos-inc aria-label="Add one">+</button>
+              </div>
+            {%- else -%}
+              <button class="byos__add" type="button" disabled>Sold out</button>
+            {%- endif -%}
+          </article>
+        {%- else -%}
+          <p class="byos__empty">Pick a collection in the theme editor to populate this builder.</p>
+        {%- endfor -%}
+      </div>
+
+      <aside class="byos__panel" data-byos-panel>
+        <div class="byos__panel-inner">
+          <h2 class="byos__panel-title">
+            {{ section.settings.panel_title | default: 'Build your set.' }}
+            <em>{{ section.settings.panel_title_accent | default: 'Save more as you add.' }}</em>
+          </h2>
+
+          <p class="byos__progress" data-byos-progress></p>
+
+          <ol class="byos__slots" data-byos-slots>
+            {%- for block in section.blocks -%}
+              <li
+                class="byos__slot"
+                data-byos-slot
+                data-qty="{{ block.settings.qty }}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="byos__slot-num">{{ block.settings.qty }}</span>
+                <span class="byos__slot-label">{{ block.settings.label }}</span>
+                <span class="byos__slot-thumb" data-byos-slot-thumb></span>
+              </li>
+            {%- endfor -%}
+          </ol>
+
+          <ul class="byos__gifts" data-byos-gifts>
+            {%- for block in section.blocks -%}
+              {%- if block.settings.gift_product != blank -%}
+                <li class="byos__gift is-locked" data-byos-gift data-qty="{{ block.settings.qty }}">
+                  <span class="byos__gift-state">Locked</span>
+                  <span class="byos__gift-name">{{ block.settings.gift_product.title }}</span>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+
+          <dl class="byos__totals">
+            <div><dt>Subtotal</dt><dd data-byos-subtotal></dd></div>
+            <div class="byos__savings"><dt data-byos-savings-label>Savings</dt><dd data-byos-savings></dd></div>
+          </dl>
+
+          <button class="byos__cta" type="button" data-byos-submit disabled></button>
+          <p class="byos__fineprint">{{ section.settings.fineprint }}</p>
+          <p class="byos__error" data-byos-error role="alert" hidden></p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="application/json" data-byos-config>
+    {
+      "currency": {{ shop.currency | json }},
+      "locale": {{ request.locale.iso_code | json }},
+      "redirect": {{ section.settings.redirect | json }},
+      "addLabel": {{ section.settings.add_label | default: 'Add to set' | json }},
+      "addedLabel": {{ section.settings.added_label | default: 'Added' | json }},
+      "ctaLabel": {{ section.settings.cta_label | default: 'Add set to cart' | json }},
+      "minQty": {{ section.blocks.first.settings.qty | default: 2 }},
+      "tiers": [
+        {%- for block in section.blocks -%}
+          {
+            "qty": {{ block.settings.qty | default: 2 }},
+            "discount": {{ block.settings.discount | default: 0 }},
+            "label": {{ block.settings.label | json }},
+            "gift": {% if block.settings.gift_product != blank %}
+              {
+                "id": {{ block.settings.gift_product.selected_or_first_available_variant.id }},
+                "title": {{ block.settings.gift_product.title | json }},
+                "image": {{ block.settings.gift_product.featured_image | image_url: width: 120 | json }}
+              }
+            {% else %}null{% endif %}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+</section>
+
+<style>
+  .byos {
+    background: var(--byos-bg);
+    color: var(--byos-text);
+    --byos-radius: 14px;
+  }
+  .byos *,
+  .byos *::before,
+  .byos *::after { box-sizing: border-box; }
+
+  .byos__visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* ---------- Hero ---------- */
+  .byos__hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 380px;
+    overflow: hidden;
+  }
+  .byos__hero-media { position: absolute; inset: 0; }
+  .byos__hero-media img { width: 100%; height: 100%; object-fit: cover; }
+  .byos__hero-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 620px;
+    padding: 56px clamp(20px, 5vw, 72px);
+  }
+  .byos__hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--byos-bg) 8%, color-mix(in srgb, var(--byos-bg) 70%, transparent) 45%, transparent 78%);
+  }
+  .byos__hero-copy { z-index: 2; }
+  .byos__eyebrow {
+    display: inline-block;
+    padding: 7px 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--byos-accent);
+    border-radius: 999px;
+    color: var(--byos-accent);
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .byos__title {
+    margin: 0 0 16px;
+    font-size: clamp(30px, 4.4vw, 52px);
+    line-height: 1.05;
+    font-weight: 700;
+  }
+  .byos__title em { display: block; font-style: normal; color: var(--byos-accent); }
+  .byos__lede { color: var(--byos-muted); max-width: 46ch; line-height: 1.6; }
+  .byos__lede strong { color: var(--byos-text); }
+
+  /* ---------- Layout ---------- */
+  .byos__body { padding: 40px clamp(16px, 4vw, 56px) 72px; }
+  .byos__filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .byos__filter {
+    padding: 9px 20px;
+    border: 1px solid var(--byos-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--byos-muted);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .byos__filter:hover { color: var(--byos-text); border-color: var(--byos-text); }
+  .byos__filter.is-active {
+    background: var(--byos-accent);
+    border-color: var(--byos-accent);
+    color: var(--byos-accent-ink);
+  }
+
+  .byos__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 28px;
+    align-items: start;
+  }
+  .byos__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* ---------- Cards ---------- */
+  .byos__card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid var(--byos-border);
+    border-radius: var(--byos-radius);
+    background: var(--byos-surface);
+    transition: border-color .18s ease, transform .18s ease;
+  }
+  .byos__card[hidden] { display: none; }
+  .byos__card:hover { border-color: color-mix(in srgb, var(--byos-accent) 55%, var(--byos-border)); }
+  .byos__card.is-selected {
+    border-color: var(--byos-accent);
+    box-shadow: 0 0 0 1px var(--byos-accent) inset;
+  }
+  .byos__card.is-soldout { opacity: .5; }
+  .byos__card-media {
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    margin-bottom: 14px;
+  }
+  .byos__card-media img { max-width: 78%; max-height: 100%; object-fit: contain; }
+  .byos__card-info { flex: 1 1 auto; }
+  .byos__card-title { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+  .byos__card-tagline { margin: 0 0 8px; font-size: 13px; color: var(--byos-muted); }
+  .byos__card-price { margin: 0 0 12px; color: var(--byos-accent); font-size: 15px; }
+  .byos__variant {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--byos-border);
+    border-radius: 8px;
+    background: var(--byos-bg);
+    color: var(--byos-text);
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .byos__add {
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--byos-accent);
+    color: var(--byos-accent-ink);
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .byos__add[disabled] { background: var(--byos-border); color: var(--byos-muted); cursor: not-allowed; }
+  .byos__add:not([disabled]):hover { filter: brightness(1.08); }
+
+  .byos__stepper {
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+    border: 1px solid var(--byos-accent);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .byos__stepper[hidden] { display: none; }
+  .byos__stepper button {
+    padding: 10px 0;
+    border: 0;
+    background: transparent;
+    color: var(--byos-accent);
+    font: inherit;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .byos__stepper span { text-align: center; font-weight: 600; font-size: 14px; }
+
+  /* ---------- Panel ---------- */
+  .byos__panel { position: sticky; top: 24px; }
+  .byos__panel-inner {
+    padding: 22px;
+    border: 1px solid var(--byos-border);
+    border-radius: var(--byos-radius);
+    background: var(--byos-surface);
+  }
+  .byos__panel-title { margin: 0 0 6px; font-size: 22px; line-height: 1.2; font-weight: 700; }
+  .byos__panel-title em { display: block; font-style: normal; color: var(--byos-accent); }
+  .byos__progress {
+    margin: 0 0 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--byos-border);
+    font-size: 13px;
+    color: var(--byos-muted);
+  }
+  .byos__progress b { color: var(--byos-accent); }
+
+  .byos__slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .byos__slot {
+    position: relative;
+    display: grid;
+    place-content: center;
+    gap: 4px;
+    min-height: 84px;
+    padding: 10px;
+    border: 1px dashed var(--byos-border);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--byos-muted);
+  }
+  .byos__slot.is-filled {
+    border-style: solid;
+    border-color: var(--byos-accent);
+    color: var(--byos-text);
+  }
+  .byos__slot-num {
+    position: absolute; top: 6px; right: 8px;
+    font-size: 10px; opacity: .55;
+  }
+  .byos__slot-label { font-weight: 600; }
+  .byos__slot.is-filled .byos__slot-label { color: var(--byos-accent); }
+  .byos__slot-thumb { font-size: 11px; opacity: .7; }
+
+  .byos__gifts { margin: 0 0 16px; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .byos__gift {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--byos-border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--byos-muted);
+  }
+  .byos__gift-state { text-transform: uppercase; letter-spacing: .1em; font-size: 10px; }
+  .byos__gift.is-unlocked {
+    border-color: var(--byos-accent);
+    color: var(--byos-text);
+  }
+  .byos__gift.is-unlocked .byos__gift-state { color: var(--byos-accent); }
+
+  .byos__totals { margin: 0 0 16px; font-size: 14px; }
+  .byos__totals div { display: flex; justify-content: space-between; padding: 4px 0; }
+  .byos__totals dt, .byos__totals dd { margin: 0; }
+  .byos__savings dd, .byos__savings dt { color: var(--byos-accent); }
+
+  .byos__cta {
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--byos-accent);
+    color: var(--byos-accent-ink);
+    font: inherit;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .byos__cta[disabled] { background: var(--byos-border); color: var(--byos-muted); cursor: not-allowed; }
+  .byos__cta.is-loading { opacity: .7; pointer-events: none; }
+  .byos__fineprint { margin: 12px 0 0; font-size: 11px; text-align: center; color: var(--byos-muted); }
+  .byos__error { margin: 10px 0 0; font-size: 12px; color: #ff6b6b; text-align: center; }
+  .byos__empty { color: var(--byos-muted); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1100px) {
+    .byos__layout { grid-template-columns: 1fr; }
+    .byos__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .byos__panel {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 40;
+      max-height: 72vh;
+      overflow-y: auto;
+      background: var(--byos-bg);
+      border-top: 1px solid var(--byos-border);
+    }
+    .byos__panel-inner { border: 0; border-radius: 0; }
+    .byos__body { padding-bottom: 340px; }
+    .byos__hero::after {
+      background: linear-gradient(0deg, var(--byos-bg) 12%, color-mix(in srgb, var(--byos-bg) 60%, transparent) 60%, transparent);
+    }
+  }
+  @media (max-width: 560px) {
+    .byos__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .byos__card { padding: 12px; }
+    .byos__slots { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .byos * { transition: none !important; }
+  }
+</style>
+
+<script>
+  (function () {
+    document.querySelectorAll('[data-byos]').forEach(init);
+
+    function init(root) {
+      var cfg = JSON.parse(root.querySelector('[data-byos-config]').textContent);
+      var tiers = (cfg.tiers || []).slice().sort(function (a, b) { return a.qty - b.qty; });
+      var grid = root.querySelector('[data-byos-grid]');
+      var submit = root.querySelector('[data-byos-submit]');
+      var errorEl = root.querySelector('[data-byos-error]');
+      var fmt = new Intl.NumberFormat(cfg.locale || 'en', {
+        style: 'currency',
+        currency: cfg.currency || 'EUR'
+      });
+
+      // state: { variantId: { qty, price, title, card } }
+      var state = {};
+
+      /* ---- filters ---- */
+      root.querySelectorAll('[data-byos-filter]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tag = btn.dataset.byosFilter;
+          root.querySelectorAll('[data-byos-filter]').forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+            b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+          });
+          root.querySelectorAll('[data-byos-card]').forEach(function (card) {
+            var tags = (card.dataset.tags || '').split(',').map(function (t) { return t.trim(); });
+            card.hidden = tag !== '*' && tags.indexOf(tag) === -1;
+          });
+        });
+      });
+
+      /* ---- cards ---- */
+      root.querySelectorAll('[data-byos-card]').forEach(function (card) {
+        var select = card.querySelector('[data-byos-variant]');
+        if (select) {
+          select.addEventListener('change', function () {
+            var opt = select.options[select.selectedIndex];
+            // moving variants resets that card's selection
+            removeAll(card.dataset.variantId);
+            card.dataset.variantId = opt.value;
+            card.dataset.price = opt.dataset.price;
+            card.querySelector('[data-byos-card-price]').textContent = fmt.format(opt.dataset.price / 100);
+            render();
+          });
+        }
+
+        var addBtn = card.querySelector('[data-byos-add]');
+        if (addBtn && !addBtn.disabled) addBtn.addEventListener('click', function () { change(card, 1); });
+
+        var inc = card.querySelector('[data-byos-inc]');
+        var dec = card.querySelector('[data-byos-dec]');
+        if (inc) inc.addEventListener('click', function () { change(card, 1); });
+        if (dec) dec.addEventListener('click', function () { change(card, -1); });
+      });
+
+      function change(card, delta) {
+        var id = card.dataset.variantId;
+        var entry = state[id];
+        if (!entry) {
+          entry = state[id] = {
+            qty: 0,
+            price: parseInt(card.dataset.price, 10),
+            title: card.dataset.title,
+            card: card
+          };
+        }
+        entry.qty += delta;
+        if (entry.qty <= 0) delete state[id];
+        render();
+      }
+
+      function removeAll(id) { delete state[id]; }
+
+      function selectedLines() {
+        return Object.keys(state).map(function (id) {
+          return { id: id, qty: state[id].qty, price: state[id].price, title: state[id].title };
+        });
+      }
+
+      function totalQty() {
+        return selectedLines().reduce(function (n, l) { return n + l.qty; }, 0);
+      }
+
+      function currentTier(qty) {
+        var hit = null;
+        tiers.forEach(function (t) { if (qty >= t.qty) hit = t; });
+        return hit;
+      }
+
+      function nextTier(qty) {
+        for (var i = 0; i < tiers.length; i++) if (qty < tiers[i].qty) return tiers[i];
+        return null;
+      }
+
+      /* ---- render ---- */
+      function render() {
+        var qty = totalQty();
+        var tier = currentTier(qty);
+        var next = nextTier(qty);
+        var discount = tier ? tier.discount : 0;
+
+        // cards
+        root.querySelectorAll('[data-byos-card]').forEach(function (card) {
+          var entry = state[card.dataset.variantId];
+          var stepper = card.querySelector('[data-byos-stepper]');
+          var addBtn = card.querySelector('[data-byos-add]');
+          if (!stepper || !addBtn) return;
+          card.classList.toggle('is-selected', !!entry);
+          stepper.hidden = !entry;
+          addBtn.hidden = !!entry;
+          if (entry) stepper.querySelector('[data-byos-qty]').textContent = entry.qty;
+        });
+
+        // progress line
+        var progress = root.querySelector('[data-byos-progress]');
+        if (next) {
+          var need = next.qty - qty;
+          progress.innerHTML = 'Add <b>' + need + '</b> more ' + (need === 1 ? 'item' : 'items') +
+            ' to unlock <b>' + next.label + '</b>';
+        } else if (tier) {
+          progress.innerHTML = 'Maximum reward unlocked — <b>' + tier.label + '</b>';
+        } else {
+          progress.textContent = '';
+        }
+
+        // slots
+        root.querySelectorAll('[data-byos-slot]').forEach(function (slot) {
+          slot.classList.toggle('is-filled', qty >= parseInt(slot.dataset.qty, 10));
+        });
+
+        // gifts
+        root.querySelectorAll('[data-byos-gift]').forEach(function (gift) {
+          var unlocked = qty >= parseInt(gift.dataset.qty, 10);
+          gift.classList.toggle('is-unlocked', unlocked);
+          gift.classList.toggle('is-locked', !unlocked);
+          gift.querySelector('.byos__gift-state').textContent = unlocked ? 'Free' : 'Locked';
+        });
+
+        // totals
+        var subtotal = selectedLines().reduce(function (n, l) { return n + l.price * l.qty; }, 0);
+        var savings = Math.round(subtotal * (discount / 100));
+        root.querySelector('[data-byos-subtotal]').textContent = fmt.format(subtotal / 100);
+        root.querySelector('[data-byos-savings-label]').textContent = 'Savings (' + discount + '%)';
+        root.querySelector('[data-byos-savings]').textContent = '\u2212' + fmt.format(savings / 100);
+
+        // cta
+        if (qty < cfg.minQty) {
+          var missing = cfg.minQty - qty;
+          submit.disabled = true;
+          submit.textContent = 'Add ' + missing + ' more ' + (missing === 1 ? 'item' : 'items');
+        } else {
+          submit.disabled = false;
+          submit.textContent = cfg.ctaLabel + ' \u00b7 ' + fmt.format((subtotal - savings) / 100);
+        }
+      }
+
+      /* ---- submit ---- */
+      submit.addEventListener('click', function () {
+        var qty = totalQty();
+        if (qty < cfg.minQty) return;
+
+        var items = selectedLines().map(function (l) {
+          return { id: parseInt(l.id, 10), quantity: l.qty };
+        });
+
+        // append every unlocked gift variant
+        tiers.forEach(function (t) {
+          if (t.gift && qty >= t.qty) {
+            items.push({
+              id: t.gift.id,
+              quantity: 1,
+              properties: { _byos_gift: 'true' }
+            });
+          }
+        });
+
+        errorEl.hidden = true;
+        submit.classList.add('is-loading');
+
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ items: items })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.data.description || res.data.message || 'Could not add to cart.');
+            window.location.href = cfg.redirect === 'checkout'
+              ? '/checkout'
+              : window.Shopify.routes.root + 'cart';
+          })
+          .catch(function (err) {
+            submit.classList.remove('is-loading');
+            errorEl.textContent = err.message;
+            errorEl.hidden = false;
+          });
+      });
+
+      render();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Build your set",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "BUILD YOUR SET" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Save up to 20%" },
+    { "type": "text", "id": "heading_accent", "label": "Accent heading", "default": "Unlock free gifts" },
+    { "type": "richtext", "id": "subheading", "label": "Subheading" },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image" },
+
+    { "type": "header", "content": "Products" },
+    { "type": "collection", "id": "collection", "label": "Bundle collection" },
+    {
+      "type": "text",
+      "id": "filter_tags",
+      "label": "Filter tags (comma separated, must match product tags)",
+      "default": "Hair, Body, Skin"
+    },
+    { "type": "text", "id": "filter_all_label", "label": "\"All\" label", "default": "All" },
+    { "type": "text", "id": "add_label", "label": "Add button label", "default": "Add to set" },
+
+    { "type": "header", "content": "Panel" },
+    { "type": "text", "id": "panel_title", "label": "Panel title", "default": "Build your set." },
+    { "type": "text", "id": "panel_title_accent", "label": "Panel accent line", "default": "Save more as you add." },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Add set to cart" },
+    {
+      "type": "select",
+      "id": "redirect",
+      "label": "After adding, go to",
+      "options": [
+        { "value": "cart", "label": "Cart" },
+        { "value": "checkout", "label": "Checkout" }
+      ],
+      "default": "cart"
+    },
+    {
+      "type": "text",
+      "id": "fineprint",
+      "label": "Fine print",
+      "default": "Discount applies automatically at checkout."
+    },
+
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#0c0c0c" },
+    { "type": "color", "id": "surface", "label": "Card surface", "default": "#161616" },
+    { "type": "color", "id": "border", "label": "Border", "default": "#2a2a2a" },
+    { "type": "color", "id": "text", "label": "Text", "default": "#f2f0ec" },
+    { "type": "color", "id": "muted", "label": "Muted text", "default": "#9b9791" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#c9a44c" },
+    { "type": "color", "id": "accent_ink", "label": "Accent text", "default": "#0c0c0c" }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Tier",
+      "settings": [
+        { "type": "number", "id": "qty", "label": "Items required", "default": 2 },
+        { "type": "number", "id": "discount", "label": "Discount %", "default": 10 },
+        { "type": "text", "id": "label", "label": "Reward label", "default": "10% off" },
+        { "type": "product", "id": "gift_product", "label": "Free gift (price must be 0.00)" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Build your set",
+      "blocks": [
+        { "type": "tier" },
+        { "type": "tier" },
+        { "type": "tier" },
+        { "type": "tier" }
+      ]
+    }
+  ]
+}
+{% endschema %}

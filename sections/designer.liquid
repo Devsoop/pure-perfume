@@ -1,0 +1,130 @@
+<section class="designer mk">
+    <div class="designer-container">
+        <div class="designer-title">
+            <h1>Waarom overstappen van designerparfums?</h1>
+        </div>
+
+
+         <div class="slider-div">
+          <!-- Swiper -->
+            <div class="swiper mySwiper2">
+                <div class="swiper-wrapper">
+
+                <div class="swiper-slide">
+                  <img src="{{ 'reason-1-img.png' | asset_url }}" alt="image" width="320px" height="100%" class="reason-img">
+                      <div class="right-pawrt-reason">
+                        <div class="reason-div">REDEN 1</div>
+                        <h1 class="reason">Het <strong>ruikt naar luxe</strong>, maar zonder het hoge prijskaartje</h1>
+                        <p>Pure Parfum vangt de essentie van iconische designergeuren, <strong>maar dan zonder het prijskaartje</strong>. Je krijgt die luxe, dure geur – voor een fractie van de prijs.</p>
+                      </div>
+                </div>
+
+                 <div class="swiper-slide">
+                  <img src="{{ 'reason-2-img.png' | asset_url }}" alt="image" width="320px" height="100%" class="reason-img">
+                      <div class="right-pawrt-reason">
+                        <div class="reason-div">REDEN 2</div>
+                        <h1 class="reason">Het is eigenlijk pure parfumsterkte</h1>
+                        <p>De meeste ‘eau de parfum’ of ‘toilette’ opties vervagen snel. De onze is parfum – de meest geconcentreerde formule. <strong>Één spray blijft de hele dag zitten</strong>, zelfs bij zweet, weer en lange dagen.</p>
+                      </div>
+                </div>
+
+                <div class="swiper-slide">
+                  <img src="{{ 'reason-3-img.png' | asset_url }}" alt="image" width="320px" height="100%" class="reason-img">
+                      <div class="right-pawrt-reason">
+                        <div class="reason-div">REDEN 3</div>
+                        <h1 class="reason">Geen schadelijke chemicaliën, alleen premium ingrediënten</h1>
+                        <p>Vergeet de harde alcohol en synthetische vulstoffen. Wij gebruiken <strong>schone, huidvriendelijke ingrediënten</strong> – zodat je heerlijk ruikt en je goed voelt over wat je draagt.</p>
+                      </div>
+                </div>
+
+                <div class="swiper-slide">
+                  <img src="{{ 'reason-4-img.png' | asset_url }}" alt="image" width="320px" height="100%" class="reason-img">
+                      <div class="right-pawrt-reason">
+                        <div class="reason-div">REDEN 4</div>
+                        <h1 class="reason">Zonder risico met een 30-dagen geld-terug-garantie</h1>
+                        <p>Geen fan van de geur? Geen probleem. Je hebt 30 dagen om het terug te sturen. Designermerken doen dat niet – die nemen je geld en zijn weg.</p>
+                      </div>
+                </div>
+
+              
+                </div>
+
+                <div class="swiper-pagination2"></div>
+            </div>
+
+            <div class="swiper-buttons swiper-buttons2">
+                    <div class="swiper-button-prev2">
+                        <img src="{{ 'arrow-left.png' | asset_url }}" alt="image" width="34px" height="34px" class="arrow arrow-left">
+                    </div>
+                    <div class="swiper-button-next2">
+                        <img src="{{ 'arrow-right.png' | asset_url }}" alt="image" width="34px" height="34px" class="arrow arrow-right">
+                    </div>
+            </div>
+        </div>
+
+
+        <div class="divovic-batonic">
+        <div class="btn-div-mark">
+            <a href="#main-buy-sec" class="anchor-to-top">Kies je geuren</a>
+            <div class="display-mark">
+                <img src="{{ 'check.svg' | asset_url }}" alt="image" width="20px" height="19px" class="check-mark">
+                <p>Geurtest goedgekeurd of je krijgt je geld terug</p>
+            </div>
+        </div>
+     </div>
+    </div>
+</section>
+
+
+<style>
+  .designer .swiper-slide {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.9); /* base scale for all slides */
+    opacity: 0.6;
+  }
+
+  .designer .swiper-slide-active {
+     transform: none;
+    opacity: 1;
+  }
+</style>
+
+
+<!-- Initialize Swiper -->
+  <script>
+  var swiper = new Swiper(".mySwiper2", {
+    slidesPerView: 2,
+    spaceBetween: 36,
+    pagination: {
+      el: ".swiper-pagination2",
+      clickable: true,
+    },
+    autopay: {
+    delay: 2000, // time between slides in milliseconds
+    disableOnInteraction: false, // keeps autoplay going after manual nav
+    },
+    centeredSlides: true, // this enables centered slides
+    loop: true, // enables infinite looping
+    navigation: {
+      nextEl: ".swiper-button-next2",
+      prevEl: ".swiper-button-prev2",
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 10,
+      },
+      1150: {
+        slidesPerView: 1.5,
+        spaceBetween: 15,
+      },
+      1400: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },}
+  });
+  </script>

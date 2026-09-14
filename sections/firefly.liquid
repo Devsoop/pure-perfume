@@ -1,0 +1,41 @@
+<section class="firefly mk">
+    <div class="firefly-container">
+        <div class="fire-divovic">
+            <img src="{{ 'stars-white.png' | asset_url }}" alt="image" width="auto" height="20px" class="starovic">
+            <span>Beoordeeld met <strong>4.8 / 5.0 | ‘Uitstekend’</strong></span>
+        </div>
+        <h1>Drie Luxe Geuren voor de Prijs van Eén</h1>
+        <p class="padovic">Stel je trio samen van luxe-geïnspireerde parfums – allemaal voor minder dan één designerfles.</p>
+        <div class="btn-div-mark">
+            <a href="#main-buy-sec" class="anchor-to-top">Kies je geuren</a>
+            <div class="display-mark">
+                <img src="{{ 'check.svg' | asset_url }}" alt="image" width="20px" height="19px" class="check-mark">
+                <p>Geurtest goedgekeurd of je krijgt je geld terug</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="linearovic"></div>
+</section>
+
+<style>
+  .firefly {
+    background-image: url({{ 'firefly-desktop.jpg' | asset_url }});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  @media screen and (max-width: 1150px) {
+    .firefly {
+      background-image: url({{ 'firelfy-mobile.jpg' | asset_url }});
+      background-position: top center;
+    }
+  }
+
+  @media(max-width:800px) {
+    .firefly {
+        background-position: center center;
+    }
+  }
+</style>

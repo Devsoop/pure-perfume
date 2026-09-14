@@ -1,0 +1,60 @@
+<section class="footer-mark mk">
+  <div class="footer-mark-container">
+      <div class="div-logo-footer">
+        <img src="{{ 'logo-footer.png' | asset_url }}" alt="image" width="auto" height="36px" class="logo-footer-mark">
+      </div>
+
+      <div class="div-middle-footer">
+         <div class="newsletter-div-marko">
+           <h1>Blijf op de hoogte</h1>
+           <p>Meld je aan voor nieuwsbrieven, speciale<br> aanbiedingen en exclusieve kortingen!</p>
+           <div class="newsletter-goes-here">
+            <form method="post" action="{{ routes.newsletter_subscribe_url }}" accept-charset="UTF-8" class="newsletter-form-marko" novalidate>
+                <input type="hidden" name="form_type" value="customer" />
+                <input type="hidden" name="utf8" value="✓" />
+
+                <div class="news-marko-inside">
+                    <input
+                    type="email"
+                    name="contact[email]"
+                    id="NewsletterEmailMarko"
+                    class="input-news-foot"
+                    placeholder="Jouw e-mailadres"
+                    required
+                    />
+                    <button
+                    type="submit"
+                    class="input-news-submit"
+                    >
+                    Aanmelden
+                    </button>
+                </div>
+
+                {% if form.posted_successfully? %}
+                    <p class="text-green-600 mt-2">Bedankt voor je inschrijving!</p>
+                {% elsif form.errors %}
+                    <p class="text-red-600 mt-2">{{ form.errors | default_errors }}</p>
+                {% endif %}
+                </form>
+           </div>
+         </div>
+
+         <div class="marko-footer-middle-box">
+    <a href="#">Neem contact met ons op</a>
+    <a href="#">Volg je bestelling</a>
+    <a href="#">Verzending & levering</a>
+</div>
+
+<div class="marko-footer-middle-box">
+    <a href="#">Retourbeleid</a>
+    <a href="https://pureparfum.nl/pages/privacybeleid">Privacybeleid</a>
+    <a href="#">Servicevoorwaarden</a>
+</div>
+      </div>
+
+      <div class="bottom-footer">
+        <span>Pure Parfum 2025</span>
+        <img src="{{ 'cards.png' | asset_url }}" alt="image" width="auto" height="24px" class="cards-footer-mark">
+      </div>
+  </div>
+</section>

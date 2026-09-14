@@ -1,0 +1,76 @@
+<section class="statistic mk">
+    <h1>Klanten stappen massaal over. <strong>Dit is waarom...</strong></h1>
+
+    <div class="statistic-container">
+        <div class="stat-1">
+            <h2 id="stat-1-number">92%</h2>
+            <div class="div-stat-1">
+                <strong>Zou hiervoor kiezen</strong> in plaats van hun gebruikelijke designermerk.
+            </div>
+        </div>
+
+
+        <div class="stat-2">
+            <h2 id="stat-2-number">98%</h2>
+            <div class="div-stat-1">
+                Zei dat hun geur <strong>precies hetzelfde rook</strong> als die van het designermerk
+            </div>
+        </div>
+
+
+        <div class="stat-3">
+            <h2 id="stat-3-number">95%</h2>
+            <div class="div-stat-1">
+                Zei dat de geur <strong>de hele dag bleef hangen</strong> zonder opnieuw aan te brengen.
+            </div>
+        </div>
+    </div>
+
+    <img src="{{ 'img-profjum.png' | asset_url }}" alt="image" width="320px" height="auto" class="bocica-desktop">
+
+    <img src="{{ 'profjum-mob.png' | asset_url }}" alt="image" width="320px" height="auto" class="bocica-mobile">
+
+</section>
+
+
+
+<script>
+  function animateCounter(id, target, duration) {
+    const element = document.getElementById(id);
+    let start = 0;
+    const stepTime = Math.abs(Math.floor(duration / target));
+    
+    const timer = setInterval(() => {
+      start++;
+      element.textContent = start + '%';
+      if (start >= target) {
+        clearInterval(timer);
+        element.textContent = target + '%';
+      }
+    }, stepTime);
+  }
+
+  const options = {
+    threshold: 0.5 // Trigger when 50% of the section is visible
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Reset the values to 0% before restarting animation
+        document.getElementById('stat-1-number').textContent = '0%';
+        document.getElementById('stat-2-number').textContent = '0%';
+        document.getElementById('stat-3-number').textContent = '0%';
+
+        animateCounter('stat-1-number', 92, 1000);
+        animateCounter('stat-2-number', 98, 1000);
+        animateCounter('stat-3-number', 95, 1000);
+      }
+    });
+  }, options);
+
+  const statSection = document.querySelector('.statistic');
+  if (statSection) {
+    observer.observe(statSection);
+  }
+</script>

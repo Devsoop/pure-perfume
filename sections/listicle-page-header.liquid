@@ -1,0 +1,158 @@
+<div
+  class="listicle-page-header"
+  style="
+    --background-color: {{ section.settings.background_color }};
+    --button-background: {{ section.settings.button_background }};
+    --button-color: {{ section.settings.button_color }};
+  "
+>
+  <div class="listicle-page-header__container">
+    <div class="listicle-page-header__layout">
+      <div class="listicle-page-header__logo">
+        {% if section.settings.logo != blank %}
+          <img
+            src="{{ section.settings.logo | image_url }}"
+            width="205"
+            height="35"
+            alt="{{ shop.name }}"
+          >
+        {% endif %}
+      </div>
+      {% if section.settings.button_label and section.settings.button_link %}
+        <div class="listicle-page-header__button">
+          <a
+            href="{{ section.settings.button_link }}"
+          >
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  #shopify-section-listicle-page-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+
+  .listicle-page-header {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: var(--background-color);
+    border-bottom: 1px solid #d0d5dd;
+  }
+
+  .listicle-page-header__container {
+    width: 100%;
+    max-width: 1312px;
+    padding-inline: 16px;
+    margin: 0 auto;
+  }
+
+  .listicle-page-header__layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .listicle-page-header__logo {
+    width: 100%;
+    max-width: 205px;
+    flex: 1;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-header__logo {
+      max-width: 168px;
+    }
+  }
+
+  .listicle-page-header__logo img {
+    display: block;
+    width: 100%;
+    height: 35px;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-header__logo img {
+      height: 30px;
+    }
+  }
+
+  .listicle-page-header__button a {
+    text-decoration: none;
+    display: flex;
+    padding: 12px 18px;
+    border-radius: 4px;
+    background: var(--button-background);
+    color: var(--button-color);
+    text-align: center;
+    font-family: 'Montserrat';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-header__button a {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "⚡Listicle Page Header",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button Background",
+      "default": "#1B0F08"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Winkel Pureparfum",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ]
+}
+{% endschema %}

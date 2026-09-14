@@ -1,0 +1,520 @@
+<div
+  class="listicle-page-product"
+  style="
+    --padding-top-desktop: {{ section.settings.padding_top }}px;
+    --padding-bottom-desktop: {{ section.settings.padding_bottom }}px;
+    --padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --background-color: {{ section.settings.background_color }};
+    --title-color: {{ section.settings.title_color }};
+  "
+>
+  <div class="listicle-page-product__container">
+    <div class="listicle-page-product__layout">
+      <div class="listicle-page-product__heading">
+        {% if section.settings.title != blank %}
+          <h3>{{ section.settings.title }}</h3>
+        {% endif %}
+        <div class="listicle-page-product__benefits">
+          {%- for block in section.blocks -%}
+            <div class="listicle-page-product__benefit">
+              {% if block.settings.icon != blank %}
+                <img
+                  src="{{ block.settings.icon | image_url }}"
+                  width="22"
+                  height="22"
+                  alt="{{ block.settings.text | strip_html | escape }}"
+                >
+              {% endif %}
+
+              <p>{{ block.settings.text }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="listicle-page-product__main">
+        <div class="listicle-page-product__image">
+          {% if section.settings.image != blank %}
+            <img
+              src="{{ section.settings.image | image_url }}"
+              width="424"
+              height="424"
+              alt="{{ section.settings.product_title | strip_html | escape }}"
+            >
+          {% endif %}
+        </div>
+        <div class="listicle-page-product__product">
+          {% if section.settings.product_image != blank %}
+            <div class="listicle-page-product__product-card">
+              <div class="listicle-page-product__product-card__image">
+                {% if section.settings.product_badge != blank %}
+                  <div class="listicle-page-product__product-card__badge">
+                    {{ section.settings.product_badge }}
+                  </div>
+                {% endif %}
+                <img
+                  src="{{ section.settings.product_image | image_url }}"
+                  width="251"
+                  height="251"
+                  alt="{{ section.settings.product_title | strip_html | escape }}"
+                >
+              </div>
+              <div class="listicle-page-product__product-card__content">
+                {% if section.settings.product_review_count != blank %}
+                  <div class="listicle-page-product__product-card__review">
+                    <svg width="82" height="17" viewBox="0 0 82 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7.82771 1.55868C7.85747 1.49855 7.90345 1.44793 7.96045 1.41254C8.01746 1.37715 8.08322 1.3584 8.15031 1.3584C8.21741 1.3584 8.28317 1.37715 8.34017 1.41254C8.39717 1.44793 8.44315 1.49855 8.47292 1.55868L10.0418 4.7365C10.1451 4.94566 10.2977 5.12662 10.4864 5.26384C10.6751 5.40106 10.8942 5.49045 11.1251 5.52433L14.6336 6.03779C14.7001 6.04742 14.7626 6.07546 14.8139 6.11874C14.8653 6.16202 14.9036 6.21882 14.9243 6.2827C14.9451 6.34658 14.9476 6.415 14.9315 6.48022C14.9154 6.54544 14.8814 6.60486 14.8333 6.65175L12.2959 9.12256C12.1286 9.28563 12.0034 9.48692 11.9311 9.70911C11.8588 9.9313 11.8416 10.1677 11.881 10.398L12.48 13.889C12.4917 13.9554 12.4846 14.0238 12.4593 14.0864C12.434 14.1489 12.3917 14.2031 12.3371 14.2428C12.2825 14.2824 12.2178 14.306 12.1505 14.3106C12.0832 14.3153 12.0159 14.301 11.9564 14.2693L8.81997 12.6203C8.61331 12.5118 8.38339 12.4551 8.14997 12.4551C7.91656 12.4551 7.68663 12.5118 7.47997 12.6203L4.34426 14.2693C4.28472 14.3008 4.21753 14.315 4.15033 14.3102C4.08312 14.3054 4.01861 14.2819 3.96413 14.2423C3.90964 14.2026 3.86737 14.1485 3.84212 14.0861C3.81687 14.0236 3.80966 13.9553 3.8213 13.889L4.41965 10.3987C4.45917 10.1683 4.44205 9.93172 4.36976 9.70939C4.29746 9.48707 4.17217 9.28566 4.00468 9.12256L1.46731 6.65243C1.41881 6.60559 1.38445 6.54607 1.36813 6.48065C1.35181 6.41523 1.35419 6.34655 1.375 6.28241C1.39581 6.21828 1.43421 6.16129 1.48584 6.11791C1.53746 6.07454 1.60023 6.04654 1.66699 6.03711L5.17488 5.52433C5.40597 5.49072 5.62543 5.40144 5.81437 5.2642C6.00331 5.12697 6.15608 4.94587 6.25951 4.7365L7.82771 1.55868Z" fill="#F26B1D" stroke="#F26B1D" stroke-width="1.2225" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M24.1285 1.55868C24.1583 1.49855 24.2042 1.44793 24.2612 1.41254C24.3182 1.37715 24.384 1.3584 24.4511 1.3584C24.5182 1.3584 24.5839 1.37715 24.641 1.41254C24.698 1.44793 24.7439 1.49855 24.7737 1.55868L26.3426 4.7365C26.4459 4.94566 26.5985 5.12662 26.7872 5.26384C26.9759 5.40106 27.195 5.49045 27.4258 5.52433L30.9344 6.03779C31.0009 6.04742 31.0634 6.07546 31.1147 6.11874C31.1661 6.16202 31.2043 6.21882 31.2251 6.2827C31.2459 6.34658 31.2484 6.415 31.2323 6.48022C31.2162 6.54544 31.1822 6.60486 31.1341 6.65175L28.5967 9.12256C28.4294 9.28563 28.3042 9.48692 28.2319 9.70911C28.1596 9.9313 28.1424 10.1677 28.1818 10.398L28.7808 13.889C28.7925 13.9554 28.7853 14.0238 28.7601 14.0864C28.7348 14.1489 28.6924 14.2031 28.6378 14.2428C28.5832 14.2824 28.5186 14.306 28.4513 14.3106C28.384 14.3153 28.3167 14.301 28.2571 14.2693L25.1208 12.6203C24.9141 12.5118 24.6842 12.4551 24.4508 12.4551C24.2173 12.4551 23.9874 12.5118 23.7808 12.6203L20.645 14.2693C20.5855 14.3008 20.5183 14.315 20.4511 14.3102C20.3839 14.3054 20.3194 14.2819 20.2649 14.2423C20.2104 14.2026 20.1682 14.1485 20.1429 14.0861C20.1177 14.0236 20.1104 13.9553 20.1221 13.889L20.7204 10.3987C20.76 10.1683 20.7428 9.93172 20.6705 9.70939C20.5982 9.48707 20.4729 9.28566 20.3055 9.12256L17.7681 6.65243C17.7196 6.60559 17.6852 6.54607 17.6689 6.48065C17.6526 6.41523 17.655 6.34655 17.6758 6.28241C17.6966 6.21828 17.735 6.16129 17.7866 6.11791C17.8382 6.07454 17.901 6.04654 17.9678 6.03711L21.4757 5.52433C21.7068 5.49072 21.9262 5.40144 22.1152 5.2642C22.3041 5.12697 22.4569 4.94587 22.5603 4.7365L24.1285 1.55868Z" fill="#F26B1D" stroke="#F26B1D" stroke-width="1.2225" stroke-linecap="round" stroke-linejoin="round"/>
+                      <g clip-path="url(#clip0_6267_11291)">
+                      <path d="M40.4273 1.55868C40.4571 1.49855 40.5031 1.44793 40.5601 1.41254C40.6171 1.37715 40.6828 1.3584 40.7499 1.3584C40.817 1.3584 40.8828 1.37715 40.9398 1.41254C40.9968 1.44793 41.0428 1.49855 41.0725 1.55868L42.6414 4.7365C42.7448 4.94566 42.8973 5.12662 43.086 5.26384C43.2747 5.40106 43.4938 5.49045 43.7247 5.52433L47.2332 6.03779C47.2997 6.04742 47.3622 6.07546 47.4136 6.11874C47.4649 6.16202 47.5032 6.21882 47.5239 6.2827C47.5447 6.34658 47.5472 6.415 47.5311 6.48022C47.515 6.54544 47.481 6.60486 47.4329 6.65175L44.8956 9.12256C44.7282 9.28563 44.603 9.48692 44.5307 9.70911C44.4584 9.9313 44.4412 10.1677 44.4806 10.398L45.0796 13.889C45.0913 13.9554 45.0842 14.0238 45.0589 14.0864C45.0336 14.1489 44.9913 14.2031 44.9367 14.2428C44.8821 14.2824 44.8174 14.306 44.7501 14.3106C44.6828 14.3153 44.6155 14.301 44.556 14.2693L41.4196 12.6203C41.2129 12.5118 40.983 12.4551 40.7496 12.4551C40.5162 12.4551 40.2862 12.5118 40.0796 12.6203L36.9439 14.2693C36.8843 14.3008 36.8171 14.315 36.7499 14.3102C36.6827 14.3054 36.6182 14.2819 36.5637 14.2423C36.5093 14.2026 36.467 14.1485 36.4417 14.0861C36.4165 14.0236 36.4093 13.9553 36.4209 13.889L37.0193 10.3987C37.0588 10.1683 37.0417 9.93172 36.9694 9.70939C36.8971 9.48707 36.7718 9.28566 36.6043 9.12256L34.0669 6.65243C34.0184 6.60559 33.9841 6.54607 33.9677 6.48065C33.9514 6.41523 33.9538 6.34655 33.9746 6.28241C33.9954 6.21828 34.0338 6.16129 34.0854 6.11791C34.1371 6.07454 34.1998 6.04654 34.2666 6.03711L37.7745 5.52433C38.0056 5.49072 38.225 5.40144 38.414 5.2642C38.6029 5.12697 38.7557 4.94587 38.8591 4.7365L40.4273 1.55868Z" fill="#F26B1D" stroke="#F26B1D" stroke-width="1.2225" stroke-linecap="round" stroke-linejoin="round"/>
+                      </g>
+                      <path d="M56.7281 1.55868C56.7579 1.49855 56.8038 1.44793 56.8608 1.41254C56.9178 1.37715 56.9836 1.3584 57.0507 1.3584C57.1178 1.3584 57.1836 1.37715 57.2406 1.41254C57.2976 1.44793 57.3435 1.49855 57.3733 1.55868L58.9422 4.7365C59.0455 4.94566 59.1981 5.12662 59.3868 5.26384C59.5755 5.40106 59.7946 5.49045 60.0255 5.52433L63.534 6.03779C63.6005 6.04742 63.663 6.07546 63.7143 6.11874C63.7657 6.16202 63.8039 6.21882 63.8247 6.2827C63.8455 6.34658 63.848 6.415 63.8319 6.48022C63.8158 6.54544 63.7818 6.60486 63.7337 6.65175L61.1963 9.12256C61.029 9.28563 60.9038 9.48692 60.8315 9.70911C60.7592 9.9313 60.742 10.1677 60.7814 10.398L61.3804 13.889C61.3921 13.9554 61.3849 14.0238 61.3597 14.0864C61.3344 14.1489 61.292 14.2031 61.2375 14.2428C61.1829 14.2824 61.1182 14.306 61.0509 14.3106C60.9836 14.3153 60.9163 14.301 60.8568 14.2693L57.7204 12.6203C57.5137 12.5118 57.2838 12.4551 57.0504 12.4551C56.8169 12.4551 56.587 12.5118 56.3804 12.6203L53.2447 14.2693C53.1851 14.3008 53.1179 14.315 53.0507 14.3102C52.9835 14.3054 52.919 14.2819 52.8645 14.2423C52.81 14.2026 52.7678 14.1485 52.7425 14.0861C52.7173 14.0236 52.7101 13.9553 52.7217 13.889L53.32 10.3987C53.3596 10.1683 53.3424 9.93172 53.2701 9.70939C53.1979 9.48707 53.0726 9.28566 52.9051 9.12256L50.3677 6.65243C50.3192 6.60559 50.2848 6.54607 50.2685 6.48065C50.2522 6.41523 50.2546 6.34655 50.2754 6.28241C50.2962 6.21828 50.3346 6.16129 50.3862 6.11791C50.4379 6.07454 50.5006 6.04654 50.5674 6.03711L54.0753 5.52433C54.3064 5.49072 54.5258 5.40144 54.7148 5.2642C54.9037 5.12697 55.0565 4.94587 55.1599 4.7365L56.7281 1.55868Z" fill="#F26B1D" stroke="#F26B1D" stroke-width="1.2225" stroke-linecap="round" stroke-linejoin="round"/>
+                      <g clip-path="url(#clip1_6267_11291)">
+                      <path d="M73.0269 1.55868C73.0567 1.49855 73.1027 1.44793 73.1597 1.41254C73.2167 1.37715 73.2824 1.3584 73.3495 1.3584C73.4166 1.3584 73.4824 1.37715 73.5394 1.41254C73.5964 1.44793 73.6424 1.49855 73.6721 1.55868L75.241 4.7365C75.3444 4.94566 75.4969 5.12662 75.6856 5.26384C75.8743 5.40106 76.0934 5.49045 76.3243 5.52433L79.8329 6.03779C79.8993 6.04742 79.9618 6.07546 80.0132 6.11874C80.0645 6.16202 80.1028 6.21882 80.1236 6.2827C80.1443 6.34658 80.1468 6.415 80.1307 6.48022C80.1146 6.54544 80.0806 6.60486 80.0325 6.65175L77.4952 9.12256C77.3278 9.28563 77.2026 9.48692 77.1303 9.70911C77.0581 9.9313 77.0408 10.1677 77.0802 10.398L77.6792 13.889C77.691 13.9554 77.6838 14.0238 77.6585 14.0864C77.6332 14.1489 77.5909 14.2031 77.5363 14.2428C77.4817 14.2824 77.417 14.306 77.3497 14.3106C77.2824 14.3153 77.2151 14.301 77.1556 14.2693L74.0192 12.6203C73.8125 12.5118 73.5826 12.4551 73.3492 12.4551C73.1158 12.4551 72.8859 12.5118 72.6792 12.6203L69.5435 14.2693C69.4839 14.3008 69.4167 14.315 69.3495 14.3102C69.2823 14.3054 69.2178 14.2819 69.1633 14.2423C69.1089 14.2026 69.0666 14.1485 69.0413 14.0861C69.0161 14.0236 69.0089 13.9553 69.0205 13.889L69.6189 10.3987C69.6584 10.1683 69.6413 9.93172 69.569 9.70939C69.4967 9.48707 69.3714 9.28566 69.2039 9.12256L66.6665 6.65243C66.618 6.60559 66.5837 6.54607 66.5673 6.48065C66.551 6.41523 66.5534 6.34655 66.5742 6.28241C66.595 6.21828 66.6334 6.16129 66.6851 6.11791C66.7367 6.07454 66.7994 6.04654 66.8662 6.03711L70.3741 5.52433C70.6052 5.49072 70.8247 5.40144 71.0136 5.2642C71.2025 5.12697 71.3553 4.94587 71.4587 4.7365L73.0269 1.55868Z" fill="#F26B1D" stroke="#F26B1D" stroke-width="1.2225" stroke-linecap="round" stroke-linejoin="round"/>
+                      </g>
+                      <defs>
+                      <clipPath id="clip0_6267_11291">
+                      <rect width="16.3" height="16.3" fill="white" transform="translate(32.5996)"/>
+                      </clipPath>
+                      <clipPath id="clip1_6267_11291">
+                      <rect width="16.3" height="16.3" fill="white" transform="translate(65.1992)"/>
+                      </clipPath>
+                      </defs>
+                    </svg>
+
+                    <p>({{ section.settings.product_review_count }})</p>
+                  </div>
+                {% endif %}
+
+                {% if section.settings.product_title != blank %}
+                  <p class="listicle-page-product__product-card__title">{{ section.settings.product_title }}</p>
+                {% endif %}
+
+                {% if section.settings.product_description != blank %}
+                  <p class="listicle-page-product__product-card__description">
+                    {{ section.settings.product_description }}
+                  </p>
+                {% endif %}
+
+                {% if section.settings.product_button_label and section.settings.product_button_url %}
+                  <div class="listicle-page-product__product-card__button">
+                    <a
+                      href="{{ section.settings.product_button_url }}"
+                    >
+                      {{ section.settings.product_button_label }}
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .listicle-page-product {
+    padding-top: var(--padding-top-mobile);
+    padding-bottom: var(--padding-bottom-mobile);
+    background-color: var(--background-color);
+  }
+
+  @media screen and (min-width: 768px) {
+    .listicle-page-product {
+      padding-top: var(--padding-top-desktop);
+      padding-bottom: var(--padding-bottom-desktop);
+    }
+  }
+
+  .listicle-page-product__container {
+    width: 100%;
+    max-width: 1320px;
+    padding-inline: 20px;
+    margin: 0 auto;
+  }
+
+  .listicle-page-product__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .listicle-page-product__layout {
+       gap: 18px;
+    }
+  }
+
+  .listicle-page-product__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .listicle-page-product__heading h3 {
+    margin-block: 0;
+    color: var(--title-color);
+    text-align: center;
+    font-family: 'Neue Haas Grotesk Display Pro';
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-product__heading h3 {
+      font-size: 32px;
+    }
+  }
+
+  .listicle-page-product__benefits {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-product__benefits {
+      gap: 8px;
+    }
+  }
+
+  .listicle-page-product__benefit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .listicle-page-product__benefit img {
+    display: block;
+    width: 22px;
+    height: 22px;
+  }
+
+  .listicle-page-product__benefit p {
+    margin-block: 0;
+    color: var(--title-color);
+    font-family: 'Montserrat';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+  }
+
+  .listicle-page-product__main {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-product__main {
+      flex-direction: column-reverse;
+    }
+  }
+
+  .listicle-page-product__image {
+    width: 100%;
+    max-width: 424px;
+  }
+
+  .listicle-page-product__image img {
+    display: block;
+    object-fit: contain;
+    width: 100%;
+    height: auto;
+    max-height: 424px;
+    border-radius: 8px;
+  }
+
+  .listicle-page-product__product-card {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #f6eae3;
+    background: #fff;
+  }
+
+  .listicle-page-product__product-card__image {
+    position: relative;
+  }
+
+  .listicle-page-product__product-card__image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 256px;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-product__product-card__image img {
+      height: auto;
+    }
+  }
+
+  .listicle-page-product__product-card__badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: linear-gradient(119deg, #f37b35 34.59%, #771f04 100%);
+    color: #fff;
+    font-family: 'Montserrat';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+  }
+
+  .listicle-page-product__product-card__content {
+    padding-top: 12px;
+  }
+
+  .listicle-page-product__product-card__review {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .listicle-page-product__product-card__review p {
+    overflow: hidden;
+    color: var(--Text-Secondary, rgba(58, 54, 49, 0.75));
+    text-align: center;
+    text-overflow: ellipsis;
+    margin-block: 0;
+    font-family: 'Montserrat';
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+  }
+
+  .listicle-page-product__product-card__title {
+    overflow: hidden;
+    color: #1a1a1a;
+    text-overflow: ellipsis;
+    margin-block: 8px 0;
+    font-family: 'Montserrat';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    align-self: stretch;
+  }
+
+  .listicle-page-product__product-card__description {
+    margin-block: 4px 0;
+    overflow: hidden;
+    color: #000;
+    text-overflow: ellipsis;
+    font-family: 'Montserrat';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    align-self: stretch;
+  }
+
+  .listicle-page-product__product-card__button {
+    margin-top: 10px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .listicle-page-product__product-card__button {
+      margin-top: 18px;
+    }
+  }
+
+  .listicle-page-product__product-card__button a {
+    display: flex;
+    height: 45px;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    font-family: 'Montserrat';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    text-decoration: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "⚡Listicle Page Product",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section Background Color",
+      "default": "#FFF3EC"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Exclusief Aanbod!!!"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "text",
+      "id": "product_badge",
+      "label": "Product Badge",
+      "default": "50% Korting"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "product_review_count",
+      "label": "Product Review Count",
+      "default": "121"
+    },
+    {
+      "type": "text",
+      "id": "product_title",
+      "label": "Product Title",
+      "default": "Geïnspireerd door One Million №624"
+    },
+    {
+      "type": "text",
+      "id": "product_description",
+      "label": "Product Description",
+      "default": "Parfumsterkte • EU-gemaakt"
+    },
+    {
+      "type": "text",
+      "id": "product_button_label",
+      "label": "Product Button Label",
+      "default": "Bekijken"
+    },
+    {
+      "type": "url",
+      "id": "product_button_url",
+      "label": "Product Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Paddings"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Beperkte tijdsaanbieding"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "⚡Listicle Page Product"
+    }
+  ]
+}
+{% endschema %}
