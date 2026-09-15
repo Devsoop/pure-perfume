@@ -1,0 +1,393 @@
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  if section.blocks.size > 0 and section.blocks.size < columns_desktop
+    assign columns_desktop = section.blocks.size
+  endif
+  if columns_desktop < 1
+    assign columns_desktop = 1
+  endif
+-%}
+
+{%- style -%}
+  .shop-by-category-{{ section.id }} {
+    --sbc-circle: {{ section.settings.circle_size }}px;
+    --sbc-circle-mobile: {{ section.settings.circle_size | times: 0.62 | round }}px;
+    --sbc-columns: {{ columns_desktop }};
+    --sbc-media-bg: {{ section.settings.circle_background }};
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .shop-by-category-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="shop-by-category shop-by-category-{{ section.id }} color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width shop-by-category__inner">
+    {%- if section.settings.title != blank -%}
+      <h2 class="shop-by-category__heading shop-by-category__heading--{{ section.settings.heading_alignment }} {{ section.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {{ section.settings.title | escape }}
+      </h2>
+    {%- endif -%}
+
+    <ul
+      class="shop-by-category__grid"
+      role="list"
+    >
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign category_title = block.settings.title
+          if category_title == blank and block.settings.collection != blank
+            assign category_title = block.settings.collection.title
+          endif
+          if category_title == blank
+            assign category_title = 'Collection'
+          endif
+
+          assign category_url = block.settings.link
+          if block.settings.collection != blank
+            assign category_url = block.settings.collection.url
+          endif
+
+          assign category_image = block.settings.image
+          if category_image == blank and block.settings.collection.image
+            assign category_image = block.settings.collection.image
+          endif
+          if category_image == blank and block.settings.collection.products.first.featured_image
+            assign category_image = block.settings.collection.products.first.featured_image
+          endif
+
+          assign circle_desktop = section.settings.circle_size
+          assign circle_mobile = section.settings.circle_size | times: 0.62 | round
+          assign img_sizes = '(min-width: 750px) ' | append: circle_desktop | append: 'px, ' | append: circle_mobile | append: 'px'
+        -%}
+
+        <li
+          class="shop-by-category__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          <a
+            class="shop-by-category__link"
+            {% if category_url != blank %}
+              href="{{ category_url }}"
+            {% else %}
+              role="link"
+              aria-disabled="true"
+            {% endif %}
+          >
+            <span class="shop-by-category__media shop-by-category__media--{{ section.settings.image_fit }}">
+              {%- if category_image != blank -%}
+                {{
+                  category_image
+                  | image_url: width: 600
+                  | image_tag:
+                    widths: '160, 200, 240, 320, 400, 500, 600',
+                    sizes: img_sizes,
+                    alt: category_title,
+                    loading: 'lazy'
+                }}
+              {%- else -%}
+                {{ 'collection-apparel-1' | placeholder_svg_tag: 'shop-by-category__placeholder' }}
+              {%- endif -%}
+            </span>
+            <span class="shop-by-category__label">{{ category_title | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% stylesheet %}
+  .shop-by-category__inner {
+    width: 100%;
+  }
+
+  .shop-by-category__heading {
+    margin: 0 0 2.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .shop-by-category__heading--left {
+    text-align: left;
+  }
+
+  .shop-by-category__heading--center {
+    text-align: center;
+  }
+
+  .shop-by-category__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--sbc-columns), minmax(0, 1fr));
+    justify-items: center;
+    align-items: start;
+    gap: 2.8rem 2.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .shop-by-category__item {
+    width: 100%;
+    max-width: var(--sbc-circle);
+  }
+
+  .shop-by-category__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+  }
+
+  .shop-by-category__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1;
+    height: auto;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--sbc-media-bg);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .shop-by-category__media img,
+  .shop-by-category__placeholder {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .shop-by-category__media--cover img {
+    object-fit: cover;
+  }
+
+  .shop-by-category__media--contain img,
+  .shop-by-category__placeholder {
+    object-fit: contain;
+    padding: 10%;
+    box-sizing: border-box;
+  }
+
+  .shop-by-category__label {
+    display: block;
+    margin-top: 1.2rem;
+    padding: 0 0.4rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    transition: color 0.25s ease;
+  }
+
+  .shop-by-category__link:hover .shop-by-category__media,
+  .shop-by-category__link:focus-visible .shop-by-category__media {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .shop-by-category__link:hover .shop-by-category__label,
+  .shop-by-category__link:focus-visible .shop-by-category__label {
+    color: #aa9463;
+  }
+
+  .shop-by-category__link:focus-visible {
+    outline: none;
+  }
+
+  .shop-by-category__link:focus-visible .shop-by-category__media {
+    outline: 2px solid #aa9463;
+    outline-offset: 4px;
+  }
+
+  @media screen and (max-width: 989px) and (min-width: 750px) {
+    .shop-by-category__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .shop-by-category__heading {
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+    }
+
+    .shop-by-category__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.6rem 1.2rem;
+    }
+
+    .shop-by-category__item {
+      max-width: var(--sbc-circle-mobile);
+    }
+
+    .shop-by-category__label {
+      margin-top: 0.8rem;
+      font-size: 1.3rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shop by category",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 12,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by category"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h2",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 6,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "range",
+      "id": "circle_size",
+      "min": 100,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "label": "Circle size",
+      "default": 160
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "options": [
+        { "value": "contain", "label": "Fit (product bottles)" },
+        { "value": "cover", "label": "Fill circle" }
+      ],
+      "default": "cover",
+      "label": "Image fit"
+    },
+    {
+      "type": "color",
+      "id": "circle_background",
+      "label": "Circle background",
+      "default": "#F3EFE8"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Square product shot on a light background works best."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Category"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Used if no collection is selected."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by category",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Women" } },
+        { "type": "category", "settings": { "title": "Unisex" } },
+        { "type": "category", "settings": { "title": "Men" } },
+        { "type": "category", "settings": { "title": "Bestsellers" } },
+        { "type": "category", "settings": { "title": "Body Care" } },
+        { "type": "category", "settings": { "title": "Love" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

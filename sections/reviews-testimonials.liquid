@@ -1,0 +1,785 @@
+{%- liquid
+  assign star_color = section.settings.star_color
+-%}
+
+<div
+  class="reviews-testimonials"
+  style="
+    --reviews-bg: {{ section.settings.background }};
+    --reviews-heading: {{ section.settings.heading_color }};
+    --reviews-card-bg: {{ section.settings.card_background }};
+    --reviews-title: {{ section.settings.title_color }};
+    --reviews-text: {{ section.settings.text_color }};
+    --reviews-meta: {{ section.settings.meta_color }};
+    --reviews-star: {{ star_color }};
+    --reviews-btn-bg: {{ section.settings.button_background }};
+    --reviews-btn-border: {{ section.settings.button_border }};
+    --reviews-btn-icon: {{ section.settings.button_icon }};
+    --reviews-gap: {{ section.settings.column_gap }}px;
+    --reviews-gap-mobile: {{ section.settings.column_gap_mobile }}px;
+    --reviews-radius: {{ section.settings.card_radius }}px;
+    --reviews-pad-top: {{ section.settings.padding_top }}px;
+    --reviews-pad-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="reviews-testimonials__inner">
+    {%- if section.settings.heading != blank or section.settings.heading_line_2 != blank -%}
+      <div class="reviews-testimonials__heading">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="reviews-testimonials__heading-line">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.heading_line_2 != blank -%}
+          <h2 class="reviews-testimonials__heading-line">{{ section.settings.heading_line_2 }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <reviews-testimonials-slider
+        class="reviews-testimonials__slider"
+        data-desktop="{{ section.settings.columns_desktop }}"
+        data-tablet="{{ section.settings.columns_tablet }}"
+        data-mobile="{{ section.settings.columns_mobile }}"
+        aria-roledescription="{{ 'sections.slideshow.carousel' | t }}"
+      >
+        <button
+          type="button"
+          class="reviews-testimonials__btn reviews-testimonials__btn--prev"
+          data-prev
+          aria-label="{{ 'sections.slideshow.previous_slideshow' | t }}"
+        >
+          <span class="reviews-testimonials__chevron" aria-hidden="true"></span>
+        </button>
+
+        <div class="reviews-testimonials__viewport" data-viewport>
+          <div class="reviews-testimonials__track" data-track>
+            {%- for block in section.blocks -%}
+              {%- assign rating = block.settings.rating | default: 5 | plus: 0 -%}
+              <article
+                class="reviews-testimonials__card"
+                data-slide
+                {{ block.shopify_attributes }}
+              >
+                <div class="reviews-testimonials__stars" aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: rating, rating_max: 5 }}">
+                  {%- for i in (1..5) -%}
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      {% if i > rating %}
+                        class="is-empty"
+                      {% endif %}
+                    >
+                      <rect width="32" height="32" fill="{{ star_color }}"></rect>
+                      <path
+                        d="M9.20283 27L16.001 21.807L22.7972 27L20.2018 18.596L27 13.403H18.5984L16.001 5L13.4037 13.403H5L11.7982 18.596L9.20283 27Z"
+                        fill="#ffffff"
+                      ></path>
+                    </svg>
+                  {%- endfor -%}
+                </div>
+
+                {%- if block.settings.title != blank -%}
+                  <div class="reviews-testimonials__title">{{ block.settings.title | escape }}</div>
+                {%- endif -%}
+
+                {%- if block.settings.quote != blank -%}
+                  <div class="reviews-testimonials__quote">
+                    <p>{{ block.settings.quote | escape | newline_to_br }}</p>
+                  </div>
+                {%- endif -%}
+
+                <div class="reviews-testimonials__meta">
+                  {%- if block.settings.author != blank -%}
+                    <p class="reviews-testimonials__author">{{ block.settings.author | escape }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.date != blank -%}
+                    <p class="reviews-testimonials__date">{{ block.settings.date | escape }}</p>
+                  {%- endif -%}
+                </div>
+              </article>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="reviews-testimonials__btn reviews-testimonials__btn--next"
+          data-next
+          aria-label="{{ 'sections.slideshow.next_slideshow' | t }}"
+        >
+          <span class="reviews-testimonials__chevron" aria-hidden="true"></span>
+        </button>
+      </reviews-testimonials-slider>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .section-reviews-testimonials {
+    margin: 0 !important;
+  }
+
+  .reviews-testimonials {
+    background: var(--reviews-bg);
+    padding: 3rem 0;
+    overflow: hidden;
+  }
+
+  .reviews-testimonials__inner {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .reviews-testimonials__heading {
+    text-align: center;
+    margin: 0 0 2rem;
+  }
+
+  .reviews-testimonials__heading-line {
+    margin: 0;
+    color: var(--reviews-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0;
+    word-break: break-word;
+  }
+
+  .reviews-testimonials__slider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .reviews-testimonials__viewport {
+    min-width: 0;
+    flex: 1;
+    overflow: visible;
+  }
+
+  .reviews-testimonials__track {
+    display: flex;
+    gap: var(--reviews-gap-mobile);
+    align-items: stretch;
+    will-change: transform;
+  }
+
+  .reviews-testimonials__card {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem 1.2rem;
+    background: var(--reviews-card-bg);
+    border-radius: var(--reviews-radius);
+    min-width: 0;
+  }
+
+  .reviews-testimonials__stars {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .reviews-testimonials__stars svg {
+    display: block;
+    width: 1.8rem;
+    height: 1.8rem;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .reviews-testimonials__stars svg.is-empty {
+    opacity: 0.28;
+  }
+
+  .reviews-testimonials__title {
+    margin: 1.2rem 0 0;
+    color: var(--reviews-title);
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .reviews-testimonials__quote {
+    margin-top: 0.6rem;
+  }
+
+  .reviews-testimonials__quote p {
+    margin: 0;
+    color: var(--reviews-text);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .reviews-testimonials__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .reviews-testimonials__author,
+  .reviews-testimonials__date {
+    margin: 0;
+    color: var(--reviews-meta);
+    font-size: 1.2rem;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  .reviews-testimonials__author {
+    font-weight: 700;
+  }
+
+  .reviews-testimonials__date {
+    line-height: 1.5;
+  }
+
+  .reviews-testimonials__btn {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    padding: 0;
+    border: 1px solid var(--reviews-btn-border);
+    border-radius: 100px;
+    background: var(--reviews-btn-bg);
+    color: var(--reviews-btn-icon);
+    cursor: pointer;
+    z-index: 2;
+    appearance: none;
+    transition: opacity 0.25s ease, background 0.25s ease;
+  }
+
+  .reviews-testimonials__btn:hover {
+    opacity: 0.75;
+  }
+
+  .reviews-testimonials__btn[hidden] {
+    display: none;
+  }
+
+  .reviews-testimonials__chevron {
+    display: block;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    transform: rotate(-45deg);
+    position: relative;
+    left: -0.1rem;
+  }
+
+  .reviews-testimonials__btn--prev .reviews-testimonials__chevron {
+    transform: rotate(135deg);
+    left: 0.1rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    .reviews-testimonials__track {
+      gap: var(--reviews-gap);
+    }
+
+    .reviews-testimonials__title {
+      font-size: 1.3rem;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .reviews-testimonials {
+      padding-top: var(--reviews-pad-top);
+      padding-bottom: var(--reviews-pad-bottom);
+    }
+
+    .reviews-testimonials__inner {
+      padding: 0 5rem;
+    }
+
+    .reviews-testimonials__heading {
+      margin-bottom: 2.4rem;
+    }
+
+    .reviews-testimonials__heading-line {
+      font-size: 3.2rem;
+    }
+
+    .reviews-testimonials__viewport {
+      overflow: hidden;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class ReviewsTestimonialsSlider extends HTMLElement {
+    connectedCallback() {
+      if (this.initialized) return;
+      this.viewport = this.querySelector('[data-viewport]');
+      this.track = this.querySelector('[data-track]');
+      this.prev = this.querySelector('[data-prev]');
+      this.next = this.querySelector('[data-next]');
+      if (!this.viewport || !this.track) return;
+
+      this.originalSlides = Array.from(this.track.querySelectorAll('[data-slide]:not([data-clone])'));
+      if (this.originalSlides.length === 0) return;
+      this.initialized = true;
+
+      this.buildClones();
+      this.index = this.originalSlides.length;
+      this.perView = 1;
+      this.animating = false;
+      this.onPrev = () => this.go(-1);
+      this.onNext = () => this.go(1);
+      this.onResize = () => this.layout();
+
+      this.prev.addEventListener('click', this.onPrev);
+      this.next.addEventListener('click', this.onNext);
+      this.resizeObserver = new ResizeObserver(this.onResize);
+      this.resizeObserver.observe(this.viewport);
+      this.bindSwipe();
+      this.layout();
+    }
+
+    disconnectedCallback() {
+      if (this.prev) this.prev.removeEventListener('click', this.onPrev);
+      if (this.next) this.next.removeEventListener('click', this.onNext);
+      if (this.resizeObserver) this.resizeObserver.disconnect();
+      this.unbindSwipe();
+    }
+
+    buildClones() {
+      this.track.querySelectorAll('[data-clone]').forEach((node) => node.remove());
+      const clones = this.originalSlides.map((slide) => this.cloneSlide(slide));
+      clones.forEach((clone) => this.track.appendChild(clone));
+      clones
+        .map((clone) => clone.cloneNode(true))
+        .reverse()
+        .forEach((clone) => this.track.insertBefore(clone, this.track.firstChild));
+    }
+
+    cloneSlide(slide) {
+      const clone = slide.cloneNode(true);
+      clone.setAttribute('data-clone', '');
+      clone.removeAttribute('data-shopify-editor-block');
+      return clone;
+    }
+
+    columns() {
+      if (window.matchMedia('(min-width: 1024px)').matches) return Number(this.dataset.desktop) || 3;
+      if (window.matchMedia('(min-width: 768px)').matches) return Number(this.dataset.tablet) || 3;
+      return Number(this.dataset.mobile) || 1;
+    }
+
+    gap() {
+      const styles = getComputedStyle(this.track);
+      return parseFloat(styles.columnGap || styles.gap) || 0;
+    }
+
+    layout() {
+      this.perView = this.columns();
+      const count = this.originalSlides.length;
+      const canSlide = count > this.perView;
+
+      if (this.prev) this.prev.hidden = !canSlide;
+      if (this.next) this.next.hidden = !canSlide;
+
+      const width = this.viewport.clientWidth;
+      const gap = this.gap();
+      const slideWidth = (width - gap * (this.perView - 1)) / this.perView;
+
+      this.track.querySelectorAll('[data-slide]').forEach((slide) => {
+        slide.style.width = `${slideWidth}px`;
+      });
+
+      if (!canSlide) {
+        this.index = count;
+        this.setOffset(false);
+        return;
+      }
+
+      this.setOffset(false);
+    }
+
+    go(direction) {
+      const count = this.originalSlides.length;
+      if (count <= this.perView || this.animating) return;
+      this.index += direction;
+      this.setOffset(true);
+    }
+
+    setOffset(animate) {
+      const gap = this.gap();
+      const slide = this.originalSlides[0];
+      const step = slide.getBoundingClientRect().width + gap;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      this.animating = animate && !reduce;
+      this.track.style.transition = this.animating ? 'transform 0.3s ease' : 'none';
+      this.track.style.transform = `translate3d(${-this.index * step}px,0,0)`;
+
+      if (!this.animating) {
+        this.normalizeIndex();
+        return;
+      }
+
+      const onEnd = (event) => {
+        if (event && event.target !== this.track) return;
+        this.track.removeEventListener('transitionend', onEnd);
+        this.normalizeIndex();
+        this.animating = false;
+      };
+      this.track.addEventListener('transitionend', onEnd);
+    }
+
+    normalizeIndex() {
+      const count = this.originalSlides.length;
+      if (count <= this.perView) return;
+      let jumped = false;
+      if (this.index >= count * 2) {
+        this.index -= count;
+        jumped = true;
+      } else if (this.index < count) {
+        this.index += count;
+        jumped = true;
+      }
+      if (jumped) this.setOffset(false);
+    }
+
+    bindSwipe() {
+      this.pointerStart = null;
+      this.onPointerDown = (event) => {
+        if (event.touches) this.pointerStart = event.touches[0].clientX;
+        else this.pointerStart = event.clientX;
+      };
+      this.onPointerUp = (event) => {
+        if (this.pointerStart == null) return;
+        const x = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
+        const delta = x - this.pointerStart;
+        this.pointerStart = null;
+        if (Math.abs(delta) < 40) return;
+        this.go(delta < 0 ? 1 : -1);
+      };
+      this.viewport.addEventListener('touchstart', this.onPointerDown, { passive: true });
+      this.viewport.addEventListener('touchend', this.onPointerUp, { passive: true });
+    }
+
+    unbindSwipe() {
+      if (!this.viewport) return;
+      this.viewport.removeEventListener('touchstart', this.onPointerDown);
+      this.viewport.removeEventListener('touchend', this.onPointerUp);
+    }
+  }
+
+  if (!customElements.get('reviews-testimonials-slider')) {
+    customElements.define('reviews-testimonials-slider', ReviewsTestimonialsSlider);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Reviews testimonials",
+  "class": "section-reviews-testimonials",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Waarom 50.000+"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading_line_2",
+      "label": "Heading line 2",
+      "default": "anderen fan zijn"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Cards on desktop",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Cards on tablet",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Cards on mobile",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "column_gap_mobile",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap on mobile",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Review title",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Review text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "meta_color",
+      "label": "Author and date",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star background",
+      "default": "#00b67a"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Arrow background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_border",
+      "label": "Arrow border",
+      "default": "#c7c7c7"
+    },
+    {
+      "type": "color",
+      "id": "button_icon",
+      "label": "Arrow icon",
+      "default": "#7b7b7b"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Ruikt geweldig"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Review",
+          "default": "Ik was positief verrast hoe deze parfum ruikt! Doet me heel erg denken aan mijn normale parfum. En blijft echt de hele dag hangen."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Sanne Zwart"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date",
+          "default": "5 uur geleden"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Stars",
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews testimonials",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "title": "Ruikt geweldig",
+            "quote": "Ik was positief verrast hoe deze parfum ruikt! Doet me heel erg denken aan mijn normale parfum. En blijft echt de hele dag hangen.",
+            "author": "Sanne Zwart",
+            "date": "5 uur geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Iedereen vraagt...",
+            "quote": "Iedereen vraagt welke geur ik draag. Ongelooflijk dat deze parfum zo goed en betaalbaar is",
+            "author": "Mark Luik",
+            "date": "1 dag geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Goed alternatief",
+            "quote": "Mijn vriend dacht dat ik mijn dure parfum droeg. Dit is een geweldig betaalbaar alternatief voor luxe parfums.",
+            "author": "Laura de Graaf",
+            "date": "1 dag geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Overtrof mijn verwachting",
+            "quote": "Ik heb hem naar mijn normale parfum getest en was echt verrast hoe die rook.",
+            "author": "Tim Metzelaar",
+            "date": "2 dagen geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Blijft de hele dag",
+            "quote": "Eindelijk een parfum dat de hele dag blijft hangen zonder constant bij te sprayen. Fantastisch gewoon.",
+            "author": "Eva Leek",
+            "date": "4 dagen geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Echt een aanrader",
+            "quote": "Ik was sceptisch, maar ik heb meteen weer besteld, want wat ruikt dit goed. Echt een aanrader!",
+            "author": "Iris van klaveren",
+            "date": "5 dagen geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Ruikt intens, blijft lang",
+            "quote": "Ruikt intens, blijft lang hangen en kost bijna niets. Waarom zou ik ooit nog kiezen voor duurdere parfums?",
+            "author": "Michel Visser",
+            "date": "6 dagen geleden",
+            "rating": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "title": "Heerlijke geur",
+            "quote": "Heerlijke geur die vergelijkbaar ruikt aan mijn favoriet. Zelfs na een feestje blijft hij sterk aanwezig.",
+            "author": "Lisa Kuiper",
+            "date": "7 dagen geleden",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
