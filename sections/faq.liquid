@@ -1,7 +1,3 @@
-{%- liquid
-  assign left_count = section.blocks.size | plus: 1 | divided_by: 2
--%}
-
 {%- style -%}
   .faq-ss-{{ section.id }} {
     --faq-bg: {{ section.settings.background }};
@@ -21,51 +17,24 @@
     {%- endif -%}
 
     <div class="faq-ss__body">
-      <div class="faq-ss__col">
-        {%- for block in section.blocks -%}
-          {%- if forloop.index <= left_count -%}
-            {%- if block.settings.question != blank -%}
-              <details class="faq-ss__item" {{ block.shopify_attributes }}>
-                <summary class="faq-ss__toggle">
-                  <p class="faq-ss__question">{{ block.settings.question | escape }}</p>
-                  <span class="faq-ss__plus" aria-hidden="true">
-                    <span class="faq-ss__plus-v"></span>
-                    <span class="faq-ss__plus-h"></span>
-                  </span>
-                </summary>
-                {%- if block.settings.answer != blank -%}
-                  <div class="faq-ss__answer rte">
-                    {{ block.settings.answer }}
-                  </div>
-                {%- endif -%}
-              </details>
+      {%- for block in section.blocks -%}
+        {%- if block.settings.question != blank -%}
+          <details class="faq-ss__item" {{ block.shopify_attributes }}>
+            <summary class="faq-ss__toggle">
+              <p class="faq-ss__question">{{ block.settings.question | escape }}</p>
+              <span class="faq-ss__plus" aria-hidden="true">
+                <span class="faq-ss__plus-v"></span>
+                <span class="faq-ss__plus-h"></span>
+              </span>
+            </summary>
+            {%- if block.settings.answer != blank -%}
+              <div class="faq-ss__answer rte">
+                {{ block.settings.answer }}
+              </div>
             {%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-
-      <div class="faq-ss__col">
-        {%- for block in section.blocks -%}
-          {%- if forloop.index > left_count -%}
-            {%- if block.settings.question != blank -%}
-              <details class="faq-ss__item" {{ block.shopify_attributes }}>
-                <summary class="faq-ss__toggle">
-                  <p class="faq-ss__question">{{ block.settings.question | escape }}</p>
-                  <span class="faq-ss__plus" aria-hidden="true">
-                    <span class="faq-ss__plus-v"></span>
-                    <span class="faq-ss__plus-h"></span>
-                  </span>
-                </summary>
-                {%- if block.settings.answer != blank -%}
-                  <div class="faq-ss__answer rte">
-                    {{ block.settings.answer }}
-                  </div>
-                {%- endif -%}
-              </details>
-            {%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
   </div>
 </div>
@@ -130,12 +99,6 @@
     margin-top: 2.4rem;
     display: grid;
     grid-template-columns: 1fr;
-    align-items: start;
-    gap: 1.6rem;
-  }
-
-  .faq-ss__col {
-    display: grid;
     align-items: start;
     gap: 1.6rem;
   }
@@ -254,11 +217,6 @@
 
     .faq-ss__body {
       margin-top: 6rem;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-    }
-
-    .faq-ss__col {
       gap: 3rem;
     }
 
