@@ -1,83 +1,530 @@
-<section class="compare mk">
-    <h1 class="compare-title">Hoe wij ons vergelijken met designermerken</h1>
-    <div class="compare-container">
-        <div class="div-first-compare">
-            <div class="div-first-compare-div">
-                <span>Amor Amor</span>
-            </div>
+{%- style -%}
+  .compare-ss-{{ section.id }} {
+    --compare-bg: {{ section.settings.background }};
+    --compare-heading: {{ section.settings.heading_color }};
+    --compare-text: {{ section.settings.text_color }};
+    --compare-muted: {{ section.settings.muted_color }};
+    --compare-line: {{ section.settings.border_color }};
+    --compare-accent: {{ section.settings.accent_color }};
+    --compare-us-bg: {{ section.settings.us_background }};
+    --compare-us-text: {{ section.settings.us_text_color }};
+    --compare-pad-top: {{ section.settings.padding_top }}px;
+    --compare-pad-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
 
-             <div class="div-first-compare-div">
-                <span>Chanel No. 5</span>
-            </div>
+<div class="compare-ss compare-ss-{{ section.id }}">
+  <div class="compare-ss__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="compare-ss__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
 
-             <div class="div-first-compare-div">
-                <span>Dior Sauvage</span>
-            </div>
-
-             <div class="div-first-compare-div">
-                <span>Chanel Coco Mademoiselle </span>
-            </div>
-
-             <div class="div-first-compare-div">
-                <span>Boss Bottled</span>
-            </div>
-
-             <div class="div-first-compare-div">
-                <span>Ombre Nomade</span>
-            </div>
-
-             <div class="div-first-compare-div last-div-compare-div">
-                <span><strong>100 ml x3 parfumset</strong></span>
-            </div>
+    <div class="compare-ss__frame" role="table" aria-label="{{ section.settings.heading | escape }}">
+      <div class="compare-ss__row compare-ss__row--head" role="row">
+        <div class="compare-ss__cell compare-ss__cell--label" role="columnheader">
+          <span class="compare-ss__col-label">{{ section.settings.label_column | default: 'Inspired by' | escape }}</span>
         </div>
-
-        <div class="middle-div-compare">
-            <img src="{{ 'logo-parfjum.png' | asset_url }}" alt="image" width="auto" height="18px" class="logo-ic-parfjum">
-            <div class="black-div-parfjum">
-               <span>€32.95</span>
-               <span>€32.95</span>
-               <span>€32.95</span>
-               <span>€32.95</span>
-               <span>€32.95</span>
-               <span>€32.95</span>
-               <span>€69.95</span>
-               <img src="{{ 'parfjum.png' | asset_url }}" alt="image" width="120px" height="auto" class="parfjum-img">
-            </div>
+        <div class="compare-ss__cell compare-ss__cell--us compare-ss__cell--us-head" role="columnheader">
+          {%- if section.settings.logo != blank -%}
+            {{
+              section.settings.logo
+              | image_url: width: 280
+              | image_tag: class: 'compare-ss__logo', loading: 'lazy', widths: '140, 280', sizes: '140px', alt: shop.name
+            }}
+          {%- else -%}
+            <span class="compare-ss__brand-stack">
+              {%- if section.settings.us_eyebrow != blank -%}
+                <span class="compare-ss__brand-eyebrow">{{ section.settings.us_eyebrow | escape }}</span>
+              {%- endif -%}
+              <span class="compare-ss__brand-name">{{ section.settings.us_label | default: shop.name | escape }}</span>
+            </span>
+          {%- endif -%}
         </div>
-
-        <div class="end-div-compare">
-            <h4>Designermerken</h4>
-            <div class="orange-div-compare">
-                <div class="div-orange-div">
-                    <span>€200</span>
-                </div>
-
-                <div class="div-orange-div">
-                    <span>€200</span>
-                </div>
-
-                <div class="div-orange-div">
-                    <span>€140</span>
-                </div>
-
-                <div class="div-orange-div">
-                    <span>€200</span>
-                </div>
-
-                <div class="div-orange-div">
-                    <span>€200</span>
-                </div>
-
-                <div class="div-orange-div">
-                    <span>€200</span>
-                </div>
-
-                <div class="div-orange-div last-org">
-                    <span><strong>€600</strong></span>
-                </div>
-
-                <img src="{{ 'parfjum-white.png' | asset_url }}" alt="image" width="120px" height="auto" class="parfjum-img-white">
-            </div>
+        <div class="compare-ss__cell compare-ss__cell--them compare-ss__cell--them-head" role="columnheader">
+          <span class="compare-ss__col-label compare-ss__col-label--center">
+            {{ section.settings.them_label | default: 'Other brands' | escape }}
+          </span>
         </div>
+      </div>
+
+      {%- for block in section.blocks -%}
+        <div
+          class="compare-ss__row{% if forloop.first %} compare-ss__row--first{% endif %}{% if forloop.last %} compare-ss__row--last{% endif %}{% if block.settings.emphasize %} compare-ss__row--deal{% endif %}"
+          role="row"
+          {{ block.shopify_attributes }}
+        >
+          <div class="compare-ss__cell compare-ss__cell--label" role="cell">
+            <span class="compare-ss__name">{{ block.settings.name | escape }}</span>
+          </div>
+          <div class="compare-ss__cell compare-ss__cell--us{% if forloop.last %} compare-ss__cell--us-foot{% endif %}{% if block.settings.emphasize %} compare-ss__cell--deal{% endif %}" role="cell">
+            <span class="compare-ss__price-group">
+              <span class="compare-ss__price compare-ss__price--us">{{ block.settings.us_price | escape }}</span>
+              {%- if block.settings.us_compare_price != blank -%}
+                <s class="compare-ss__price compare-ss__price--compare">{{ block.settings.us_compare_price | escape }}</s>
+              {%- endif -%}
+            </span>
+          </div>
+          <div class="compare-ss__cell compare-ss__cell--them" role="cell">
+            <span class="compare-ss__price compare-ss__price--them">{{ block.settings.them_price | escape }}</span>
+          </div>
+        </div>
+      {%- endfor -%}
     </div>
-</section>
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="compare-ss__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .compare-ss {
+    background: var(--compare-bg);
+    padding: var(--compare-pad-top) 0 var(--compare-pad-bottom);
+  }
+
+  .compare-ss__inner {
+    max-width: 88rem;
+  }
+
+  .compare-ss__heading {
+    margin: 0 0 3.2rem;
+    text-align: center;
+    color: var(--compare-heading);
+    font-size: clamp(2.4rem, 3.5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .compare-ss__frame {
+    position: relative;
+    display: grid;
+    width: 100%;
+  }
+
+  .compare-ss__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(12rem, 0.9fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .compare-ss__cell {
+    display: flex;
+    align-items: center;
+    min-height: 6.4rem;
+    padding: 1.4rem 1.6rem;
+  }
+
+  .compare-ss__cell--label {
+    color: var(--compare-text);
+    border-bottom: 1px solid var(--compare-line);
+  }
+
+  .compare-ss__cell--them {
+    justify-content: center;
+    color: var(--compare-text);
+    border-bottom: 1px solid var(--compare-line);
+  }
+
+  .compare-ss__row--head .compare-ss__cell--label,
+  .compare-ss__row--head .compare-ss__cell--them {
+    border-bottom: 3px solid var(--compare-accent);
+    min-height: 7.2rem;
+  }
+
+  .compare-ss__cell--them-head {
+    justify-content: center;
+    background: #fff;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 3px solid var(--compare-accent);
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .compare-ss__cell--us {
+    position: relative;
+    z-index: 2;
+    justify-content: center;
+    background: var(--compare-us-bg);
+    color: var(--compare-us-text);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .compare-ss__cell--us-head {
+    border-radius: 14px 14px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    min-height: 8.4rem;
+    margin-top: -0.8rem;
+    padding-top: 2rem;
+    padding-bottom: 1.6rem;
+  }
+
+  .compare-ss__cell--us-foot {
+    border-radius: 0 0 14px 14px;
+    border-bottom: 0;
+    margin-bottom: -0.4rem;
+    padding-bottom: 2rem;
+  }
+
+  .compare-ss__row--last .compare-ss__cell--label,
+  .compare-ss__row--last .compare-ss__cell--them {
+    border-bottom: 0;
+  }
+
+  .compare-ss__cell--deal {
+    background: var(--compare-accent);
+    border-bottom: 0;
+  }
+
+  .compare-ss__col-label {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .compare-ss__col-label--center {
+    text-align: center;
+    width: 100%;
+  }
+
+  .compare-ss__brand-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    text-align: center;
+    color: var(--compare-us-text);
+  }
+
+  .compare-ss__brand-eyebrow {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .compare-ss__brand-name {
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: 600;
+    font-size: 1.7rem;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .compare-ss__logo {
+    display: block;
+    height: 2.8rem;
+    width: auto;
+    max-width: 14rem;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .compare-ss__name {
+    font-size: 1.55rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .compare-ss__price-group {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .compare-ss__price {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .compare-ss__price--us {
+    color: var(--compare-us-text);
+  }
+
+  .compare-ss__price--compare {
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .compare-ss__price--them {
+    color: var(--compare-text);
+  }
+
+  .compare-ss__footnote {
+    margin: 1.8rem 0 0;
+    text-align: center;
+    color: var(--compare-muted);
+    font-size: 1.3rem;
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 749px) {
+    .compare-ss__heading {
+      margin-bottom: 2.4rem;
+    }
+
+    .compare-ss__row {
+      grid-template-columns: minmax(0, 1.2fr) minmax(9.5rem, 0.85fr) minmax(0, 0.9fr);
+    }
+
+    .compare-ss__cell {
+      min-height: 5.4rem;
+      padding: 1rem 0.7rem;
+    }
+
+    .compare-ss__cell--us-head {
+      min-height: 6.8rem;
+      margin-top: -0.4rem;
+      padding-top: 1.4rem;
+    }
+
+    .compare-ss__col-label,
+    .compare-ss__name,
+    .compare-ss__price {
+      font-size: 1.25rem;
+    }
+
+    .compare-ss__brand-name {
+      font-size: 1.25rem;
+    }
+
+    .compare-ss__brand-eyebrow {
+      font-size: 0.95rem;
+    }
+
+    .compare-ss__price--compare {
+      font-size: 1.1rem;
+    }
+
+    .compare-ss__logo {
+      height: 2rem;
+      max-width: 9rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Comparison",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How We Compare"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Our logo"
+    },
+    {
+      "type": "text",
+      "id": "us_eyebrow",
+      "label": "Our column eyebrow",
+      "default": "THE"
+    },
+    {
+      "type": "text",
+      "id": "us_label",
+      "label": "Our column label",
+      "default": "PURE PARFUM"
+    },
+    {
+      "type": "text",
+      "id": "them_label",
+      "label": "Other brands label",
+      "default": "Other brands"
+    },
+    {
+      "type": "text",
+      "id": "label_column",
+      "label": "Left column label",
+      "default": "Inspired by"
+    },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Row lines",
+      "default": "#e4e4e4"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (rule + deal cell)",
+      "default": "#a43c3f"
+    },
+    {
+      "type": "color",
+      "id": "us_background",
+      "label": "Our column background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "us_text_color",
+      "label": "Our column text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Comparison row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Inspired by",
+          "default": "Aventus"
+        },
+        {
+          "type": "text",
+          "id": "us_price",
+          "label": "Our price",
+          "default": "$29.95"
+        },
+        {
+          "type": "text",
+          "id": "us_compare_price",
+          "label": "Our compare-at price",
+          "info": "Shown with strikethrough. Use on the deal/set row."
+        },
+        {
+          "type": "text",
+          "id": "them_price",
+          "label": "Other brand price",
+          "default": "$295.00"
+        },
+        {
+          "type": "checkbox",
+          "id": "emphasize",
+          "label": "Highlight as deal row",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison",
+      "blocks": [
+        {
+          "type": "row",
+          "settings": {
+            "name": "Aventus",
+            "us_price": "$29.95",
+            "them_price": "$295.00"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "name": "Baracatt Rouge",
+            "us_price": "$29.95",
+            "them_price": "$245.00"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "name": "Ombre Nomade",
+            "us_price": "$29.95",
+            "them_price": "$320.00"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "name": "Black Opium",
+            "us_price": "$29.95",
+            "them_price": "$109.00"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "name": "Lost Cherry",
+            "us_price": "$29.95",
+            "them_price": "$386.00"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "name": "100ml x3 Perfume Set",
+            "us_price": "$62.50",
+            "us_compare_price": "$98.85",
+            "them_price": "$674.00",
+            "emphasize": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

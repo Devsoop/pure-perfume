@@ -1,0 +1,324 @@
+{%- style -%}
+  .customer-results-{{ section.id }} {
+    --cr-bg: {{ section.settings.background }};
+    --cr-heading: {{ section.settings.heading_color }};
+    --cr-stat: {{ section.settings.stat_color }};
+    --cr-text: {{ section.settings.text_color }};
+    --cr-pad-top: {{ section.settings.padding_top }}px;
+    --cr-pad-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<section class="customer-results customer-results-{{ section.id }}">
+  <div class="customer-results__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="customer-results__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <p class="customer-results__subheading">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    <div class="customer-results__grid">
+      {%- for block in section.blocks -%}
+        <div class="customer-results__card" {{ block.shopify_attributes }}>
+          {%- if block.settings.stat != blank -%}
+            {%- liquid
+              assign stat_raw = block.settings.stat | strip
+              assign stat_number = stat_raw | replace: '%', '' | replace: ',', '.' | split: '/' | first | times: 1
+              assign has_percent = false
+              if stat_raw contains '%'
+                assign has_percent = true
+              endif
+            -%}
+            <p
+              class="customer-results__stat"
+              data-cr-stat
+              data-target="{{ stat_number }}"
+              data-suffix="{% if has_percent %}%{% endif %}"
+              data-original="{{ stat_raw | escape }}"
+            >
+              {% if has_percent %}0%{% else %}{{ stat_raw | escape }}{% endif %}
+            </p>
+          {%- endif -%}
+          {%- if block.settings.label != blank -%}
+            <p class="customer-results__label">{{ block.settings.label | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.rating > 0 -%}
+            <div class="customer-results__stars" aria-label="{{ block.settings.rating }} out of 5">
+              {%- for i in (1..5) -%}
+                <span class="customer-results__star{% if i > block.settings.rating %} is-empty{% endif %}" aria-hidden="true">★</span>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .customer-results {
+    background: var(--cr-bg);
+    padding: var(--cr-pad-top) 0 var(--cr-pad-bottom);
+  }
+
+  .customer-results__heading {
+    margin: 0;
+    text-align: center;
+    color: var(--cr-heading);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .customer-results__subheading {
+    margin: 0.8rem auto 0;
+    max-width: 52rem;
+    text-align: center;
+    color: var(--cr-text);
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .customer-results__grid {
+    margin-top: 3.2rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .customer-results__card {
+    text-align: center;
+    padding: 2rem 1.2rem;
+  }
+
+  .customer-results__stat {
+    margin: 0 0 1rem;
+    color: var(--cr-stat);
+    font-size: clamp(3.6rem, 6vw, 5.6rem);
+    font-weight: 400;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .customer-results__label {
+    margin: 0;
+    color: var(--cr-text);
+    font-size: 1.45rem;
+    line-height: 1.4;
+  }
+
+  .customer-results__stars {
+    margin-top: 1rem;
+    color: #00b67a;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+  }
+
+  .customer-results__star.is-empty {
+    color: rgba(0, 0, 0, 0.15);
+  }
+
+  @media screen and (max-width: 749px) {
+    .customer-results__grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  (function () {
+    var root = document.querySelector('.customer-results-{{ section.id }}');
+    if (!root || root.dataset.crBound) return;
+    root.dataset.crBound = 'true';
+
+    var stats = root.querySelectorAll('[data-cr-stat]');
+    if (!stats.length) return;
+
+    function animateStat(el, duration) {
+      var target = parseFloat(el.getAttribute('data-target'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      var original = el.getAttribute('data-original') || '';
+
+      if (!target || isNaN(target) || !suffix) {
+        el.textContent = original;
+        return;
+      }
+
+      var start = 0;
+      var startTime = null;
+      var end = Math.round(target);
+
+      function frame(now) {
+        if (!startTime) startTime = now;
+        var progress = Math.min((now - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var value = Math.round(start + (end - start) * eased);
+        el.textContent = value + suffix;
+        if (progress < 1) requestAnimationFrame(frame);
+        else el.textContent = end + suffix;
+      }
+
+      el.textContent = '0' + suffix;
+      requestAnimationFrame(frame);
+    }
+
+    function run() {
+      stats.forEach(function (el) {
+        animateStat(el, 1100);
+      });
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      run();
+      return;
+    }
+
+    var seen = false;
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            run();
+            seen = true;
+          } else if (seen) {
+            stats.forEach(function (el) {
+              var suffix = el.getAttribute('data-suffix') || '';
+              if (suffix) el.textContent = '0' + suffix;
+            });
+          }
+        });
+      },
+      { threshold: 0.45 }
+    );
+
+    observer.observe(root);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Customer results",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Customer results & ratings"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Real feedback from people who switched to Pure Parfum."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "stat_color",
+      "label": "Stat color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#444444"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "result",
+      "name": "Result",
+      "settings": [
+        {
+          "type": "text",
+          "id": "stat",
+          "label": "Stat",
+          "default": "4.8/5"
+        },
+        {
+          "type": "textarea",
+          "id": "label",
+          "label": "Label",
+          "default": "Average customer rating"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Star rating",
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer results",
+      "blocks": [
+        {
+          "type": "result",
+          "settings": {
+            "stat": "92%",
+            "label": "Would choose this over their usual designer brand",
+            "rating": 5
+          }
+        },
+        {
+          "type": "result",
+          "settings": {
+            "stat": "98%",
+            "label": "Said the scent smelled just like the designer fragrance",
+            "rating": 5
+          }
+        },
+        {
+          "type": "result",
+          "settings": {
+            "stat": "95%",
+            "label": "Said the scent lasted all day without reapplying",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

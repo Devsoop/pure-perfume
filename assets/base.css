@@ -2481,6 +2481,17 @@ product-info .loading__spinner:not(.hidden) ~ *,
 }
 
 @media screen and (max-width: 989px) {
+  .header__heading {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .header__heading-logo-wrapper,
+  .header__heading-logo {
+    width: auto;
+    max-width: min(var(--header-logo-width, 15rem), 42vw);
+  }
+
   .header__heading,
   .header__heading-link {
     text-align: center;

@@ -1,0 +1,279 @@
+{%- style -%}
+  .guarantee-trust-{{ section.id }} {
+    --gt-bg: {{ section.settings.background }};
+    --gt-heading: {{ section.settings.heading_color }};
+    --gt-title: {{ section.settings.title_color }};
+    --gt-text: {{ section.settings.text_color }};
+    --gt-icon-bg: {{ section.settings.icon_background }};
+    --gt-icon: {{ section.settings.icon_color }};
+    --gt-pad-top: {{ section.settings.padding_top }}px;
+    --gt-pad-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div class="guarantee-trust guarantee-trust-{{ section.id }}">
+  <div class="guarantee-trust__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="guarantee-trust__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    <div class="guarantee-trust__grid">
+      {%- for block in section.blocks -%}
+        <div class="guarantee-trust__item" {{ block.shopify_attributes }}>
+          <div class="guarantee-trust__icon" aria-hidden="true">
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 100
+                | image_tag: loading: 'lazy', widths: '50, 100', sizes: '50px', alt: ''
+              }}
+            {%- else -%}
+              {%- case block.settings.icon -%}
+                {%- when 'netherlands' -%}
+                  <svg viewBox="0 0 50 50" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M25 2C12.3 2 2 12.3 2 25s10.3 23 23 23 23-10.3 23-23S37.7 2 25 2zm0 4c10.5 0 19 8.5 19 19s-8.5 19-19 19S6 35.5 6 25 14.5 6 25 6zm-1 5v12.2A3 3 0 1 0 28 26h8v-2h-8.2A3 3 0 0 0 26 21.2V11h-2z"/></svg>
+                {%- when 'clock' -%}
+                  <svg viewBox="0 0 50 50" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M25 2C12.3 2 2 12.3 2 25s10.3 23 23 23 23-10.3 23-23S37.7 2 25 2zm0 4c10.5 0 19 8.5 19 19s-8.5 19-19 19S6 35.5 6 25 14.5 6 25 6zm-.02 3A1 1 0 0 0 24 14v12.2A3 3 0 1 0 28 28h8v-2h-8.17A3 3 0 0 0 26 22.17V14a1 1 0 0 0-1.02-1z"/></svg>
+                {%- when 'quality' -%}
+                  <svg viewBox="0 0 50 50" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M25 3 8 10v14c0 12 8.4 20.7 17 23 8.6-2.3 17-11 17-23V10L25 3zm0 4.2 15 6.2v10.6c0 9.6-6.5 16.8-15 19-8.5-2.2-15-9.4-15-19V13.4l15-6.2zM23 16v11h2V16h-2zm0 14v4h2v-4h-2z"/></svg>
+                {%- when 'guarantee' -%}
+                  <svg viewBox="0 0 50 50" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M25 4 6 12v12c0 13.4 9.3 22.8 19 25 9.7-2.2 19-11.6 19-25V12L25 4zm0 4.1 15 6.3v9.6c0 10.4-7.1 18-15 20.3-7.9-2.3-15-9.9-15-20.3v-9.6l15-6.3zm-2.3 10.4-5.5 5.5 1.4 1.4 4.1-4.1 9.4 9.4 1.4-1.4-10.8-10.8z"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 50 50" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M25 4 6 12v12c0 13.4 9.3 22.8 19 25 9.7-2.2 19-11.6 19-25V12L25 4zm7.5 14.2-9.8 9.8-5.2-5.2-2.1 2.1 7.3 7.3 11.9-11.9-2.1-2.1z"/></svg>
+              {%- endcase -%}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.title != blank -%}
+            <h3 class="guarantee-trust__title">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="guarantee-trust__text">{{ block.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .guarantee-trust {
+    background: var(--gt-bg);
+    padding: var(--gt-pad-top) 0 var(--gt-pad-bottom);
+  }
+
+  .guarantee-trust__heading {
+    margin: 0 0 2.4rem;
+    text-align: center;
+    color: var(--gt-heading);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .guarantee-trust__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem 1.6rem;
+  }
+
+  .guarantee-trust__item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .guarantee-trust__icon {
+    width: 7.2rem;
+    height: 7.2rem;
+    border-radius: 50%;
+    background: var(--gt-icon-bg);
+    color: var(--gt-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.4rem;
+  }
+
+  .guarantee-trust__icon img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+  }
+
+  .guarantee-trust__title {
+    margin: 0 0 0.6rem;
+    color: var(--gt-title);
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .guarantee-trust__text {
+    margin: 0;
+    color: var(--gt-text);
+    font-size: 1.35rem;
+    line-height: 1.45;
+    max-width: 26rem;
+  }
+
+  @media screen and (max-width: 989px) {
+    .guarantee-trust__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 549px) {
+    .guarantee-trust__grid {
+      grid-template-columns: 1fr;
+      gap: 2.4rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Guarantee trust",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Pure Parfum"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Icon background",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "netherlands", "label": "Made locally" },
+            { "value": "clock", "label": "All-day scent" },
+            { "value": "quality", "label": "Quality" },
+            { "value": "guarantee", "label": "Guarantee" }
+          ],
+          "default": "netherlands"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom icon image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Made with care"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Vegan, cruelty-free, and crafted for lasting intensity."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Guarantee trust",
+      "blocks": [
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "netherlands",
+            "title": "Made with care",
+            "text": "Vegan, cruelty-free fragrances produced to a high standard."
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "clock",
+            "title": "All-day intensity",
+            "text": "Stays present 12+ hours (some say even longer)."
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "quality",
+            "title": "High quality",
+            "text": "Formulated with premium fragrance oils."
+          }
+        },
+        {
+          "type": "trust_item",
+          "settings": {
+            "icon": "guarantee",
+            "title": "30-day guarantee",
+            "text": "Not happy with the scent? Return within 30 days."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

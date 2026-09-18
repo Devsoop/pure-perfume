@@ -86,13 +86,31 @@
               assign inspiration = product.metafields.custom.inspired_by.value | default: product.metafields.custom.inspired_by | strip
             endif
 
-            if inspiration == blank
-              assign title_parts = product.title | split: ' - '
-              assign maybe_insp = title_parts | first | strip
-              if maybe_insp contains 'Inspired by' or maybe_insp contains 'Geïnspireerd'
-                assign inspiration = maybe_insp
-                assign display_title = product.title | remove_first: 'Inspired by ' | remove_first: 'Geïnspireerd door ' | strip
+            assign raw_title = product.title | strip
+            if raw_title contains 'Inspired by' or raw_title contains 'Geïnspireerd'
+              assign title_parts = raw_title | split: ' - '
+              assign number_part = title_parts | last | strip
+
+              if title_parts.size > 1
+                assign title_suffix = ' - ' | append: number_part
+                assign title_inspiration = raw_title | split: title_suffix | first | strip
+
+                if inspiration == blank
+                  assign inspiration = title_inspiration
+                endif
+
+                assign number_clean = number_part | remove: 'Nr.' | remove: 'nr.' | remove: 'NR.' | remove: 'No.' | strip
+                assign display_title = 'Nr. ' | append: number_clean
               endif
+            endif
+
+            if inspiration != blank
+              if inspiration contains 'Geïnspireerd door'
+                assign inspiration = inspiration | replace: 'Geïnspireerd door', 'Inspired by'
+              endif
+              unless inspiration contains 'Inspired by'
+                assign inspiration = 'Inspired by ' | append: inspiration
+              endunless
             endif
 
             assign price_min = product.price_min
@@ -160,7 +178,7 @@
                 {{ 'product-apparel-' | append: forloop.index | placeholder_svg_tag: 'bestsellers-card__placeholder' }}
               </div>
               <div class="bestsellers-card__info">
-                <span class="bestsellers-card__title">{{ 'onboarding.product_title' | t }}</span>
+                <span class="bestsellers-card__title">Nr. 401</span>
                 <span class="bestsellers-card__inspiration">Inspired by Designer Fragrance</span>
                 <div class="bestsellers-card__price">
                   <span class="bestsellers-card__price-sale">{{ 1999 | money }}</span>

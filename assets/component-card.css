@@ -201,6 +201,21 @@
   margin-bottom: 0;
 }
 
+.card__inspiration {
+  display: block;
+  width: 100%;
+  margin: 0.8rem 0;
+  padding: 1rem;
+  background: #f7f7f7;
+  color: #ef776b;
+  font-size: 1.3rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
 .card__heading:last-child {
   margin-bottom: 0;
 }

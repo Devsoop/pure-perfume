@@ -25,6 +25,7 @@
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
   {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+  {{ 'product-pdp.css' | asset_url | stylesheet_tag }}
   {%- if product.quantity_price_breaks_configured? -%}
     {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
   {%- endif -%}
@@ -103,22 +104,80 @@
                 {{- block.settings.text -}}
               </p>
             {%- when 'title' -%}
+              {%- liquid
+                assign display_title = product.title
+                assign inspiration = ''
+
+                if product.metafields.custom.tagline != blank
+                  assign inspiration = product.metafields.custom.tagline.value | default: product.metafields.custom.tagline | strip
+                elsif product.metafields.custom.inspiration != blank
+                  assign inspiration = product.metafields.custom.inspiration.value | default: product.metafields.custom.inspiration | strip
+                elsif product.metafields.custom.inspired_by != blank
+                  assign inspiration = product.metafields.custom.inspired_by.value | default: product.metafields.custom.inspired_by | strip
+                endif
+
+                assign raw_title = product.title | strip
+                if raw_title contains 'Inspired by' or raw_title contains 'Geïnspireerd'
+                  assign title_parts = raw_title | split: ' - '
+                  assign number_part = title_parts | last | strip
+
+                  if title_parts.size > 1
+                    assign title_suffix = ' - ' | append: number_part
+                    assign title_inspiration = raw_title | split: title_suffix | first | strip
+
+                    if inspiration == blank
+                      assign inspiration = title_inspiration
+                    endif
+
+                    assign number_clean = number_part | remove: 'Nr.' | remove: 'nr.' | remove: 'NR.' | remove: 'No.' | strip
+                    assign display_title = 'Nr. ' | append: number_clean
+                  endif
+                endif
+
+                if inspiration != blank
+                  if inspiration contains 'Geïnspireerd door'
+                    assign inspiration = inspiration | replace: 'Geïnspireerd door', 'Inspired by'
+                  endif
+                  unless inspiration contains 'Inspired by'
+                    assign inspiration = 'Inspired by ' | append: inspiration
+                  endunless
+                endif
+              -%}
               <div class="product__title" {{ block.shopify_attributes }}>
-                <h1>{{ product.title | escape }}</h1>
+                <h1>{{ display_title | escape }}</h1>
                 <a href="{{ product.url }}" class="product__title">
                   <h2 class="h1">
-                    {{ product.title | escape }}
+                    {{ display_title | escape }}
                   </h2>
                 </a>
+                {%- if inspiration != blank -%}
+                  <p class="product__inspiration">{{ inspiration | escape }}</p>
+                {%- endif -%}
               </div>
             {%- when 'price' -%}
-              <div class="no-js-hidden" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+              {%- liquid
+                assign save_variant = product.selected_or_first_available_variant
+                assign save_compare = save_variant.compare_at_price
+                assign save_price = save_variant.price
+                assign save_amount = 0
+                assign save_percent = 0
+                if save_compare > save_price
+                  assign save_amount = save_compare | minus: save_price
+                  assign save_percent = save_amount | times: 100.0 | divided_by: save_compare | round
+                endif
+              -%}
+              <div class="no-js-hidden product__price-row" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
                 {%- render 'price',
                   product: product,
                   use_variant: true,
-                  show_badges: true,
+                  show_badges: false,
                   price_class: 'price--large'
                 -%}
+                {%- if save_percent > 0 -%}
+                  <span class="product-save-badge">
+                    Save {{ save_percent }}%
+                  </span>
+                {%- endif -%}
               </div>
               {%- if product.quantity_price_breaks_configured? -%}
                 <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
@@ -427,6 +486,70 @@
               {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
             {%- when 'buy_buttons' -%}
               {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
+            {%- when 'testimonial' -%}
+              <blockquote class="product-testimonial" {{ block.shopify_attributes }}>
+                <p class="product-testimonial__quote">
+                  “{{ block.settings.quote | escape }}”
+                  {%- if block.settings.author != blank -%}
+                    <span class="product-testimonial__author">– {{ block.settings.author | escape }}</span>
+                  {%- endif -%}
+                </p>
+              </blockquote>
+            {%- when 'usp_benefits' -%}
+              <ul class="product-usp" {{ block.shopify_attributes }}>
+                {%- if block.settings.benefit_1 != blank -%}
+                  <li class="product-usp__item">
+                    <span class="product-usp__check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>{{ block.settings.benefit_1 | escape }}</span>
+                  </li>
+                {%- endif -%}
+                {%- if block.settings.benefit_2 != blank -%}
+                  <li class="product-usp__item">
+                    <span class="product-usp__check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>{{ block.settings.benefit_2 | escape }}</span>
+                  </li>
+                {%- endif -%}
+                {%- if block.settings.benefit_3 != blank -%}
+                  <li class="product-usp__item">
+                    <span class="product-usp__check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>{{ block.settings.benefit_3 | escape }}</span>
+                  </li>
+                {%- endif -%}
+                {%- if block.settings.benefit_4 != blank -%}
+                  <li class="product-usp__item">
+                    <span class="product-usp__check" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>{{ block.settings.benefit_4 | escape }}</span>
+                  </li>
+                {%- endif -%}
+              </ul>
+            {%- when 'delivery_info' -%}
+              {%- if block.settings.text != blank -%}
+                <div class="product-delivery" {{ block.shopify_attributes }}>
+                  <span class="product-delivery__dot" aria-hidden="true"></span>
+                  <p class="product-delivery__text">{{ block.settings.text | escape }}</p>
+                </div>
+              {%- endif -%}
+            {%- when 'payment_guarantee' -%}
+              <div class="product-payment-guarantee" {{ block.shopify_attributes }}>
+                {%- if block.settings.heading != blank or block.settings.text != blank -%}
+                  <div class="product-payment-guarantee__copy">
+                    {%- if block.settings.heading != blank -%}
+                      <p class="product-payment-guarantee__heading">{{ block.settings.heading | escape }}</p>
+                    {%- endif -%}
+                    {%- if block.settings.text != blank -%}
+                      <p class="product-payment-guarantee__text">{{ block.settings.text | escape }}</p>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
             {%- when 'rating' -%}
               {%- if product.metafields.reviews.rating.value != blank -%}
                 {% liquid
@@ -548,6 +671,39 @@
               {% render 'icon-with-text',
                 block: block
               %}
+            {%- when 'description_tabs' -%}
+              <div class="product-desc-tabs" data-product-tabs {{ block.shopify_attributes }}>
+                <div class="product-desc-tabs__nav" role="tablist">
+                  {%- if block.settings.tab_1_label != blank -%}
+                    <button type="button" class="product-desc-tabs__btn is-active" role="tab" aria-selected="true" data-tab="1">{{ block.settings.tab_1_label | escape }}</button>
+                  {%- endif -%}
+                  {%- if block.settings.tab_2_label != blank -%}
+                    <button type="button" class="product-desc-tabs__btn" role="tab" aria-selected="false" data-tab="2">{{ block.settings.tab_2_label | escape }}</button>
+                  {%- endif -%}
+                  {%- if block.settings.tab_3_label != blank -%}
+                    <button type="button" class="product-desc-tabs__btn" role="tab" aria-selected="false" data-tab="3">{{ block.settings.tab_3_label | escape }}</button>
+                  {%- endif -%}
+                </div>
+                {%- if block.settings.tab_1_label != blank -%}
+                  <div class="product-desc-tabs__panel is-active rte" data-panel="1" role="tabpanel">
+                    {%- if block.settings.tab_1_content != blank -%}
+                      {{ block.settings.tab_1_content }}
+                    {%- elsif product.description != blank -%}
+                      {{ product.description }}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.tab_2_label != blank -%}
+                  <div class="product-desc-tabs__panel rte" data-panel="2" role="tabpanel" hidden>
+                    {{ block.settings.tab_2_content }}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.tab_3_label != blank -%}
+                  <div class="product-desc-tabs__panel rte" data-panel="3" role="tabpanel" hidden>
+                    {{ block.settings.tab_3_content }}
+                  </div>
+                {%- endif -%}
+              </div>
           {%- endcase -%}
         {%- endfor -%}
         <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -684,6 +840,27 @@
     }
   </script>
   </div>
+  <script>
+    document.querySelectorAll('[data-product-tabs]').forEach(function (root) {
+      var buttons = root.querySelectorAll('[data-tab]');
+      var panels = root.querySelectorAll('[data-panel]');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-tab');
+          buttons.forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+            b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+          });
+          panels.forEach(function (panel) {
+            var match = panel.getAttribute('data-panel') === id;
+            panel.classList.toggle('is-active', match);
+            if (match) panel.removeAttribute('hidden');
+            else panel.setAttribute('hidden', '');
+          });
+        });
+      });
+    });
+  </script>
 </section>
 
 {% schema %}
@@ -2013,6 +2190,131 @@
           "default": "Heading",
           "label": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.label",
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
+        }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "I was sceptical, but my girlfriend thought I was wearing my expensive perfume… and you smell it all day."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Tom"
+        }
+      ]
+    },
+    {
+      "type": "usp_benefits",
+      "name": "USP benefits",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "benefit_1",
+          "label": "Benefit 1",
+          "default": "Compared to designer fragrances by customers"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2",
+          "label": "Benefit 2",
+          "default": "Get daily compliments"
+        },
+        {
+          "type": "text",
+          "id": "benefit_3",
+          "label": "Benefit 3",
+          "default": "Free shipping from €90"
+        },
+        {
+          "type": "text",
+          "id": "benefit_4",
+          "label": "Benefit 4",
+          "default": "Lasts all day intensely"
+        }
+      ]
+    },
+    {
+      "type": "delivery_info",
+      "name": "Delivery info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Almost sold out • order today, delivered tomorrow"
+        }
+      ]
+    },
+    {
+      "type": "payment_guarantee",
+      "name": "Risk guarantee",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Try it risk-free for 30 days."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "If you're not completely satisfied, you'll get your money back."
+        }
+      ]
+    },
+    {
+      "type": "description_tabs",
+      "name": "Description tabs",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_1_label",
+          "label": "Tab 1 label",
+          "default": "Description"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_1_content",
+          "label": "Tab 1 content",
+          "info": "Leave blank to use the product description."
+        },
+        {
+          "type": "text",
+          "id": "tab_2_label",
+          "label": "Tab 2 label",
+          "default": "Shipping & returns"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_2_content",
+          "label": "Tab 2 content",
+          "default": "<p>Orders placed before 3:00 PM are delivered within 1–3 business days. Every order is backed by a 14-day money-back guarantee after delivery.</p>"
+        },
+        {
+          "type": "text",
+          "id": "tab_3_label",
+          "label": "Tab 3 label",
+          "default": "Scent profile"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_3_content",
+          "label": "Tab 3 content",
+          "default": "<p>High-concentration eau de parfum formulated for all-day intensity.</p>"
         }
       ]
     }

@@ -352,6 +352,22 @@ a.product__text {
   display: none;
 }
 
+.product__inspiration {
+  display: block;
+  width: 100%;
+  max-width: 42rem;
+  margin: 1.2rem 0 0;
+  padding: 1rem;
+  background: #f7f7f7;
+  color: #ef776b;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
 .product__title + .product__text.caption-with-letter-spacing {
   margin-top: -1.5rem;
 }
