@@ -139,14 +139,7 @@
             {{ form | payment_button }}
           {%- endif -%}
 
-          <ul class="product-payment-icons list-unstyled" role="list" aria-label="Payment methods">
-            {%- assign payment_types = 'american_express,apple_pay,bancontact,diners_club,discover,google_pay,master,paypal,shopify_pay,visa' | split: ',' -%}
-            {%- for type in payment_types -%}
-              <li class="product-payment-icons__item">
-                {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
-              </li>
-            {%- endfor -%}
-          </ul>
+          {% render 'payment-icons' %}
         </div>
       {%- endform -%}
     </product-form>

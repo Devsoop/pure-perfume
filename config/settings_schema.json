@@ -1463,7 +1463,25 @@
         "id": "cart_color_scheme",
         "label": "t:sections.all.colors.label",
         "default": "background-1"
-      }
+      },
+      {"type": "header", "content": "Free shipping bar"},
+      {"type": "checkbox", "id": "cart_free_shipping_enable", "label": "Show free shipping progress bar", "default": true},
+      {"type": "number", "id": "cart_free_shipping_threshold", "label": "Free shipping threshold", "info": "Amount in store currency, e.g. 90. Match this to your shipping rates.", "default": 90},
+      {"type": "text", "id": "cart_free_shipping_text", "label": "Progress text", "info": "Use [amount] for the remaining amount.", "default": "You are [amount] away from Free Shipping"},
+      {"type": "text", "id": "cart_free_shipping_success_text", "label": "Success text", "default": "Congratulations! You get Free Shipping"},
+      {"type": "header", "content": "Upsell products"},
+      {"type": "checkbox", "id": "cart_upsell_enable", "label": "Show upsell products", "default": true},
+      {"type": "text", "id": "cart_upsell_heading", "label": "Heading", "default": "Bestsellers you might like:"},
+      {"type": "product_list", "id": "cart_upsell_products", "label": "Products", "limit": 12},
+      {"type": "collection", "id": "cart_upsell_collection", "label": "Fallback collection", "info": "Used when no products are selected above. Products already in the cart are hidden."},
+      {"type": "range", "id": "cart_upsell_limit", "label": "Maximum products", "min": 1, "max": 12, "step": 1, "default": 6},
+      {"type": "text", "id": "cart_upsell_button_label", "label": "Button label", "default": "Add"},
+      {"type": "header", "content": "Checkout area"},
+      {"type": "checkbox", "id": "cart_show_savings", "label": "Show total savings", "default": true},
+      {"type": "text", "id": "cart_savings_text", "label": "Savings text", "info": "Use [amount] for the saved amount.", "default": "You save [amount] on this order"},
+      {"type": "checkbox", "id": "cart_checkout_show_total", "label": "Show total in checkout button", "default": true},
+      {"type": "checkbox", "id": "cart_show_payment_icons", "label": "Show payment icons", "default": true},
+      {"type": "inline_richtext", "id": "cart_guarantee_text", "label": "Guarantee text", "default": "<strong>30-day</strong> money-back guarantee"}
     ]
   }
 ]

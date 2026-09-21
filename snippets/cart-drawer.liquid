@@ -7,9 +7,12 @@
 
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-drawer-extras.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
 
 <style>
   .drawer {
@@ -60,7 +63,10 @@
         </div>
       {%- endif -%}
       <div class="drawer__header">
-        <h2 class="drawer__heading">{{ 'sections.cart.title' | t }}</h2>
+        <h2 class="drawer__heading">
+          {{- 'sections.cart.title' | t -}}
+          {%- if cart != empty %} <span class="drawer__heading-count">&bull; {{ cart.item_count }}</span>{% endif -%}
+        </h2>
         <button
           class="drawer__close"
           type="button"
@@ -70,6 +76,11 @@
           {% render 'icon-close' %}
         </button>
       </div>
+      {%- if settings.cart_free_shipping_enable and cart != empty -%}
+        {% render 'cart-drawer-shipping-bar' %}
+      {%- endif -%}
+      {%- comment -%} Items and upsells share one scroll area so the items are never squeezed {%- endcomment -%}
+      <div class="cart-drawer__body">
       <cart-drawer-items
         {% if cart == empty %}
           class=" is-empty"
@@ -139,26 +150,7 @@
                             {{- item.product.title | escape -}}
                           </a>
 
-                          {%- if item.original_price != item.final_price -%}
-                            <div class="cart-item__discounted-prices">
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.regular_price' | t }}
-                              </span>
-                              <s class="cart-item__old-price product-option">
-                                {{- item.original_price | money -}}
-                              </s>
-                              <span class="visually-hidden">
-                                {{ 'products.product.price.sale_price' | t }}
-                              </span>
-                              <strong class="cart-item__final-price product-option">
-                                {{ item.final_price | money }}
-                              </strong>
-                            </div>
-                          {%- else -%}
-                            <div class="product-option">
-                              {{ item.original_price | money }}
-                            </div>
-                          {%- endif -%}
+                          {%- comment -%} Unit price removed: the line total on the right is shown once {%- endcomment -%}
 
                           {%- if item.product.has_only_default_variant == false
                             or item.properties.size != 0
@@ -447,6 +439,13 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      {%- comment -%}
+        Kept outside <cart-drawer-items>: it treats every bubbled 'change' event as a quantity update.
+      {%- endcomment -%}
+      {%- if settings.cart_upsell_enable and cart != empty -%}
+        {% render 'cart-drawer-upsell' %}
+      {%- endif -%}
+      </div>
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">
@@ -502,6 +501,29 @@
               {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
             {%- endif -%}
           </small>
+
+          {%- if settings.cart_show_savings -%}
+            {%- liquid
+              # Savings = compare-at prices (or regular prices) minus what the customer pays, incl. discounts
+              assign cart_compare_total = 0
+              for item in cart.items
+                assign compare_unit_price = item.variant.compare_at_price | default: 0
+                if compare_unit_price > item.original_price
+                  assign line_compare_price = compare_unit_price | times: item.quantity
+                else
+                  assign line_compare_price = item.original_line_price
+                endif
+                assign cart_compare_total = cart_compare_total | plus: line_compare_price
+              endfor
+              assign cart_savings = cart_compare_total | minus: cart.total_price
+            -%}
+            {%- if cart_savings > 0 -%}
+              {%- assign cart_savings_html = cart_savings | money | prepend: '<strong>' | append: '</strong>' -%}
+              <p class="cart-drawer__savings">
+                {{ settings.cart_savings_text | replace: '[amount]', cart_savings_html }}
+              </p>
+            {%- endif -%}
+          {%- endif -%}
         </div>
 
         <!-- CTAs -->
@@ -523,9 +545,24 @@
               disabled
             {% endif %}
           >
-            {{ 'sections.cart.checkout' | t }}
+            {{ 'sections.cart.checkout' | t -}}
+            {%- if settings.cart_checkout_show_total and cart != empty %} - {{ cart.total_price | money }}{% endif %}
           </button>
         </div>
+
+        {%- if settings.cart_show_payment_icons -%}
+          {% render 'payment-icons', class: 'cart-drawer__payment-icons' %}
+        {%- endif -%}
+
+        {%- if settings.cart_guarantee_text != blank -%}
+          <div class="cart-drawer__guarantee">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.5 4 5.5v6c0 4.9 3.4 8.8 8 10 4.6-1.2 8-5.1 8-10v-6z"/>
+              <path d="m8.5 12 2.5 2.5 4.5-5"/>
+            </svg>
+            <span>{{ settings.cart_guarantee_text }}</span>
+          </div>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -549,5 +586,19 @@
     document.querySelector('#checkout').addEventListener('click', function (event) {
       document.querySelector('#cart').submit();
     });
+  });
+
+  // Upsell variant select: keep the shown price in sync with the selected variant
+  document.addEventListener('change', function (event) {
+    const select = event.target.closest('[data-upsell-select]');
+    if (!select) return;
+    const option = select.options[select.selectedIndex];
+    const price = select.closest('.cart-upsell__info').querySelector('[data-upsell-price]');
+    if (!option || !price) return;
+
+    const compare = option.dataset.comparePrice
+      ? `<s class="cart-upsell__price-compare">${option.dataset.comparePrice}</s>`
+      : '';
+    price.innerHTML = `${compare}<span class="cart-upsell__price-final">${option.dataset.price}</span>`;
   });
 </script>

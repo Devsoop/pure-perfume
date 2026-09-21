@@ -1,0 +1,52 @@
+{% comment %}
+  Renders the free shipping progress bar in the cart drawer.
+  Threshold is set in Theme settings > Cart (store currency).
+
+  Usage:
+  {% render 'cart-drawer-shipping-bar' %}
+{% endcomment %}
+
+{%- liquid
+  assign threshold = settings.cart_free_shipping_threshold | default: 0 | times: 100
+  assign remaining = threshold | minus: cart.total_price
+  if threshold > 0
+    assign progress = cart.total_price | times: 100 | divided_by: threshold
+  else
+    assign progress = 100
+  endif
+  if progress > 100
+    assign progress = 100
+  endif
+  assign remaining_html = remaining | money | prepend: '<strong>' | append: '</strong>'
+-%}
+
+<div class="cart-shipping-bar{% if remaining <= 0 %} cart-shipping-bar--reached{% endif %}">
+  <p class="cart-shipping-bar__message">
+    {%- if remaining > 0 -%}
+      {{ settings.cart_free_shipping_text | replace: '[amount]', remaining_html }}
+    {%- else -%}
+      {{ settings.cart_free_shipping_success_text }}
+    {%- endif -%}
+  </p>
+  <div class="cart-shipping-bar__track-wrapper">
+    <div
+      class="cart-shipping-bar__track"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="{{ progress }}"
+      aria-label="Free shipping progress"
+    >
+      <span class="cart-shipping-bar__fill" style="width: {{ progress }}%;"></span>
+    </div>
+    <div class="cart-shipping-bar__goal">
+      <span class="cart-shipping-bar__icon">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 4h13v11H1zM14 8h4.5L22 11.5V15h-8z"/>
+          <circle cx="5.5" cy="17.5" r="2"/>
+          <circle cx="17.5" cy="17.5" r="2"/>
+        </svg>
+      </span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,165 @@
+{% comment %}
+  Renders a swipeable list of upsell products in the cart drawer.
+  Products come from Theme settings > Cart (product list, falling back to a collection).
+  Products already in the cart and sold-out products are skipped.
+  Uses the theme's <slider-component> and <product-form> so adding re-renders the drawer.
+
+  Usage:
+  {% render 'cart-drawer-upsell' %}
+{% endcomment %}
+
+{%- liquid
+  assign upsell_products = settings.cart_upsell_products
+  if upsell_products == blank and settings.cart_upsell_collection != blank
+    assign upsell_products = settings.cart_upsell_collection.products
+  endif
+
+  assign cart_product_ids = cart.items | map: 'product_id' | join: ',' | prepend: ',' | append: ','
+  assign upsell_limit = settings.cart_upsell_limit | default: 6
+  assign upsell_count = 0
+  assign upsell_ids = ','
+
+  for product in upsell_products
+    unless product.available
+      continue
+    endunless
+    assign product_key = ',' | append: product.id | append: ','
+    if cart_product_ids contains product_key
+      continue
+    endif
+    assign upsell_ids = upsell_ids | append: product_key
+    assign upsell_count = upsell_count | plus: 1
+    if upsell_count >= upsell_limit
+      break
+    endif
+  endfor
+-%}
+
+{%- if upsell_count > 0 -%}
+  <div class="cart-upsell">
+    {%- if settings.cart_upsell_heading != blank -%}
+      <p class="cart-upsell__heading">{{ settings.cart_upsell_heading }}</p>
+    {%- endif -%}
+
+    <slider-component class="cart-upsell__slider">
+      <ul
+        id="Slider-CartUpsell"
+        class="slider slider--everywhere cart-upsell__list{% if upsell_count == 1 %} cart-upsell__list--single{% endif %}"
+        role="list"
+      >
+        {%- assign slide_index = 0 -%}
+        {%- for product in upsell_products -%}
+          {%- assign product_key = ',' | append: product.id | append: ',' -%}
+          {%- unless upsell_ids contains product_key -%}
+            {%- continue -%}
+          {%- endunless -%}
+          {%- liquid
+            assign slide_index = slide_index | plus: 1
+            assign variant = product.selected_or_first_available_variant
+            assign form_id = 'CartUpsell-Form-' | append: product.id
+          -%}
+          <li id="Slide-CartUpsell-{{ slide_index }}" class="slider__slide cart-upsell__slide">
+            <div class="cart-upsell__card">
+              <a href="{{ product.url }}" class="cart-upsell__media" tabindex="-1" aria-hidden="true">
+                {%- if product.featured_media -%}
+                  <img
+                    src="{{ product.featured_media | image_url: width: 240 }}"
+                    alt="{{ product.featured_media.alt | escape }}"
+                    width="120"
+                    height="{{ 120 | divided_by: product.featured_media.aspect_ratio | ceil }}"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </a>
+
+              <div class="cart-upsell__info">
+                <a href="{{ product.url }}" class="cart-upsell__title">{{ product.title | escape }}</a>
+
+                <div class="cart-upsell__price" data-upsell-price>
+                  {%- if variant.compare_at_price > variant.price -%}
+                    <s class="cart-upsell__price-compare">{{ variant.compare_at_price | money }}</s>
+                  {%- endif -%}
+                  <span class="cart-upsell__price-final">{{ variant.price | money }}</span>
+                </div>
+
+                <product-form class="cart-upsell__form" data-hide-errors="false">
+                  <div class="product-form__error-message-wrapper" role="alert" hidden>
+                    <span class="product-form__error-message"></span>
+                  </div>
+                  {%- form 'product', product, id: form_id, class: 'cart-upsell__form-inner', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                    {%- if product.has_only_default_variant -%}
+                      <input type="hidden" name="id" value="{{ variant.id }}" disabled>
+                    {%- else -%}
+                      <div class="select cart-upsell__select-wrapper">
+                        <select
+                          name="id"
+                          class="select__select cart-upsell__select"
+                          aria-label="{{ product.title | escape }}"
+                          data-upsell-select
+                        >
+                          {%- for option_variant in product.variants -%}
+                            {%- if option_variant.available -%}
+                              <option
+                                value="{{ option_variant.id }}"
+                                data-price="{{ option_variant.price | money | escape }}"
+                                {% if option_variant.compare_at_price > option_variant.price %}
+                                  data-compare-price="{{ option_variant.compare_at_price | money | escape }}"
+                                {% endif %}
+                                {% if option_variant.id == variant.id %}
+                                  selected
+                                {% endif %}
+                              >
+                                {{ option_variant.title | escape }}
+                              </option>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </select>
+                        {% render 'icon-caret' %}
+                      </div>
+                    {%- endif -%}
+
+                    <button
+                      type="submit"
+                      name="add"
+                      class="button cart-upsell__button"
+                    >
+                      <span>{{ settings.cart_upsell_button_label | default: 'Add' }}</span>
+                      {%- render 'loading-spinner' -%}
+                    </button>
+                  {%- endform -%}
+                </product-form>
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if upsell_count > 1 -%}
+        <div class="slider-buttons cart-upsell__buttons">
+          <button
+            type="button"
+            class="slider-button slider-button--prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+          >
+            {% render 'icon-caret' %}
+          </button>
+          <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">{{ upsell_count }}</span>
+          </div>
+          <button
+            type="button"
+            class="slider-button slider-button--next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+          >
+            {% render 'icon-caret' %}
+          </button>
+        </div>
+      {%- endif -%}
+    </slider-component>
+  </div>
+{%- endif -%}
