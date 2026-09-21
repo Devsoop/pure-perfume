@@ -77,22 +77,42 @@
             "text": "If you're not completely satisfied, you'll get your money back."
           }
         },
-        "description_tabs": {
-          "type": "description_tabs",
+        "description_row": {
+          "type": "collapsible_tab",
           "settings": {
-            "tab_1_label": "Description",
-            "tab_1_content": "",
-            "tab_2_label": "Shipping & returns",
-            "tab_2_content": "<p><strong>Pure Parfum is now finally available in the USA</strong></p><p>Enjoy fast, local shipping — just like our customers in Europe.</p><p>Orders are delivered within 1–3 days.</p><p><strong>Every order is backed by a 14-day money-back guarantee after delivery.</strong></p><p>Not satisfied? You can return your order, no questions asked.</p>",
-            "tab_3_label": "FAQ",
-            "tab_3_content": "<p><strong>What kind of fragrances are these?</strong><br/>All of our products are perfumes — stronger than both eau de toilette and eau de parfum.</p><p><strong>Are your products vegan-friendly and cruelty-free?</strong><br/>Yes. We use exclusively vegan-friendly fragrance oils, and they are cruelty-free.</p><p><strong>How long does delivery take?</strong><br/>Orders placed before 3:00 PM are delivered within 3 business days.</p>"
+            "show_product_description": false,
+            "heading": "Description",
+            "icon": "none",
+            "content": "<p>{{ product.description }}</p>",
+            "page": ""
+          }
+        },
+        "shipping_row": {
+          "type": "collapsible_tab",
+          "settings": {
+            "show_product_description": false,
+            "heading": "Shipping & returns",
+            "icon": "none",
+            "content": "<p><strong>Pure Parfum is now finally available in the USA</strong></p><p>Enjoy fast, local shipping — just like our customers in Europe.</p><p>Orders are delivered within 1–3 days.</p><p><strong>Every order is backed by a 14-day money-back guarantee after delivery.</strong></p><p>Not satisfied? You can return your order, no questions asked.</p>",
+            "page": ""
+          }
+        },
+        "faq_row": {
+          "type": "collapsible_tab",
+          "settings": {
+            "show_product_description": false,
+            "heading": "FAQ",
+            "icon": "none",
+            "content": "<p><strong>What kind of fragrances are these?</strong><br/>All of our products are perfumes — stronger than both eau de toilette and eau de parfum.</p><p><strong>Are your products vegan-friendly and cruelty-free?</strong><br/>Yes. We use exclusively vegan-friendly fragrance oils, and they are cruelty-free.</p><p><strong>How long does delivery take?</strong><br/>Orders placed before 3:00 PM are delivered within 3 business days.</p>",
+            "page": ""
           }
         },
         "disclaimer_tab": {
           "type": "collapsible_tab",
           "settings": {
+            "show_product_description": false,
             "heading": "DISCLAIMER",
-            "icon": "check_mark",
+            "icon": "none",
             "content": "<p>Please note that the products listed on our site are for reference only and should not be confused with original products from well-known brands, designer brands, or niche brands. All names and copyrights, whether used or unused, are the property of their respective manufacturers and/or designers.<br/><br/>Our products are purely inspired by existing fragrances and are not identical to any other perfume or original product. Pure Parfum should not be confused with original brands, and we have no affiliation with the manufacturers of these designer brands not mentioned.<br/><br/>All trademarks, whether used or unused, are the property of their respective owners. We are not endorsed, sponsored, authorized, or maintained by any brand owner mentioned or not mentioned on this website. The use of product names is for identification and reference purposes only and does not imply any association with the respective brand owner.</p>",
             "page": ""
           }
@@ -108,11 +128,13 @@
         "delivery_info",
         "buy_buttons",
         "payment_guarantee",
-        "description_tabs",
+        "description_row",
+        "shipping_row",
+        "faq_row",
         "disclaimer_tab"
       ],
       "settings": {
-        "enable_sticky_info": true,
+        "enable_sticky_info": false,
         "color_scheme": "background-1",
         "media_size": "medium",
         "constrain_to_viewport": false,
@@ -204,8 +226,8 @@
         "review_6"
       ],
       "settings": {
-        "heading": "Why 50,000+",
-        "heading_line_2": "others are fans",
+        "heading": "Why 50,000+ others are fans",
+        "heading_line_2": "",
         "columns_desktop": 3,
         "columns_tablet": 3,
         "columns_mobile": 1,
@@ -234,7 +256,7 @@
           "settings": {
             "stat": "92%",
             "label": "Would choose this over their usual designer brand",
-            "rating": 5
+            "rating": 0
           }
         },
         "result_2": {
@@ -242,7 +264,7 @@
           "settings": {
             "stat": "98%",
             "label": "Said the scent smelled just like the designer fragrance",
-            "rating": 5
+            "rating": 0
           }
         },
         "result_3": {
@@ -250,11 +272,15 @@
           "settings": {
             "stat": "95%",
             "label": "Said the scent lasted all day without reapplying",
-            "rating": 5
+            "rating": 0
           }
         }
       },
-      "block_order": ["result_1", "result_2", "result_3"],
+      "block_order": [
+        "result_1",
+        "result_2",
+        "result_3"
+      ],
       "settings": {
         "heading": "Customer results & ratings",
         "subheading": "Real feedback from people who switched to Pure Parfum.",
@@ -330,13 +356,21 @@
           }
         }
       },
-      "block_order": ["row_1", "row_2", "row_3", "row_4", "row_5", "row_6"],
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4",
+        "row_5",
+        "row_6"
+      ],
       "settings": {
         "heading": "How We Compare",
         "us_eyebrow": "THE",
         "us_label": "PURE PARFUM",
         "them_label": "Other brands",
         "label_column": "Inspired by",
+        "footnote": "",
         "background": "#f7f7f7",
         "heading_color": "#111111",
         "text_color": "#111111",
@@ -347,6 +381,30 @@
         "us_text_color": "#ffffff",
         "padding_top": 56,
         "padding_bottom": 56
+      }
+    },
+    "loox_reviews": {
+      "type": "apps",
+      "blocks": {
+        "loox_reviews_loox_dynamic_section_YJX44g": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "reviews_to_display": "",
+            "default_tab": "automatic",
+            "only_photos": false,
+            "aggregated": false,
+            "limit": 20,
+            "hide_thumbnails": false,
+            "maxwidth": 1080,
+            "is_sample": true
+          }
+        }
+      },
+      "block_order": [
+        "loox_reviews_loox_dynamic_section_YJX44g"
+      ],
+      "settings": {
+        "include_margins": true
       }
     },
     "faq": {
@@ -388,35 +446,19 @@
           }
         }
       },
-      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5"],
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5"
+      ],
       "settings": {
         "heading": "Frequently asked questions",
         "background": "#ffffff",
         "heading_color": "#000000",
         "text_color": "#121212",
         "border_color": "#e5e5e5"
-      }
-    },
-    "loox_reviews": {
-      "type": "apps",
-      "blocks": {
-        "loox_reviews_loox_dynamic_section_YJX44g": {
-          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
-          "settings": {
-            "reviews_to_display": "",
-            "default_tab": "automatic",
-            "only_photos": false,
-            "aggregated": false,
-            "limit": 20,
-            "hide_thumbnails": false,
-            "maxwidth": 1080,
-            "is_sample": true
-          }
-        }
-      },
-      "block_order": ["loox_reviews_loox_dynamic_section_YJX44g"],
-      "settings": {
-        "include_margins": true
       }
     },
     "related-products": {
@@ -473,7 +515,12 @@
           }
         }
       },
-      "block_order": ["trust_1", "trust_2", "trust_3", "trust_4"],
+      "block_order": [
+        "trust_1",
+        "trust_2",
+        "trust_3",
+        "trust_4"
+      ],
       "settings": {
         "heading": "Why Pure Parfum",
         "background": "#ffffff",
@@ -493,8 +540,8 @@
     "reviews_testimonials",
     "customer_results",
     "compare",
-    "faq",
     "loox_reviews",
+    "faq",
     "related-products",
     "guarantee_trust"
   ]
