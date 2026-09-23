@@ -59,7 +59,8 @@ if (!customElements.get('product-info')) {
 
       fetchQuantityRules() {
         if (!this.currentVariant || !this.currentVariant.value) return;
-        this.querySelector('.quantity__rules-cart .loading__spinner').classList.remove('hidden');
+        const spinner = this.querySelector('.quantity__rules-cart .loading__spinner');
+        if (spinner) spinner.classList.remove('hidden');
         fetch(`${this.dataset.url}?variant=${this.currentVariant.value}&section_id=${this.dataset.section}`)
           .then((response) => {
             return response.text();
@@ -73,12 +74,13 @@ if (!customElements.get('product-info')) {
             console.error(e);
           })
           .finally(() => {
-            this.querySelector('.quantity__rules-cart .loading__spinner').classList.add('hidden');
+            if (spinner) spinner.classList.add('hidden');
           });
       }
 
       updateQuantityRules(sectionId, html) {
         const quantityFormUpdated = html.getElementById(`Quantity-Form-${sectionId}`);
+        if (!quantityFormUpdated) return;
         const selectors = ['.quantity__input', '.quantity__rules', '.quantity__label'];
         for (let selector of selectors) {
           const current = this.quantityForm.querySelector(selector);

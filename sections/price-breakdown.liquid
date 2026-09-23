@@ -1,0 +1,313 @@
+{%- style -%}
+  .price-breakdown-{{ section.id }} {
+    --pb-bg: {{ section.settings.background }};
+    --pb-heading: {{ section.settings.heading_color }};
+    --pb-text: {{ section.settings.text_color }};
+    --pb-accent: {{ section.settings.accent_color }};
+    --pb-box-bg: {{ section.settings.box_background }};
+    --pb-box-border: {{ section.settings.box_border_color }};
+    --pb-row-text: {{ section.settings.row_text_color }};
+    --pb-callout-bg: {{ section.settings.callout_background }};
+    --pb-pad-top: {{ section.settings.padding_top }}px;
+    --pb-pad-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign pb_price = ''
+  if product
+    assign pb_price = product.selected_or_first_available_variant.price | money_without_trailing_zeros
+  endif
+  assign pb_heading = section.settings.heading | escape | replace: '[price]', pb_price
+-%}
+
+<div class="price-breakdown price-breakdown-{{ section.id }}">
+  <div class="price-breakdown__inner page-width">
+    {%- if section.settings.heading != blank or section.settings.heading_accent != blank -%}
+      <h2 class="price-breakdown__heading">
+        {{- pb_heading -}}
+        {%- if section.settings.heading_accent != blank %}
+          <span class="price-breakdown__heading-accent">{{ section.settings.heading_accent | escape }}</span>
+        {%- endif -%}
+      </h2>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <div class="price-breakdown__text rte">{{ section.settings.text }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="price-breakdown__list" role="list">
+        {%- for block in section.blocks -%}
+          <li class="price-breakdown__row" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              <span class="price-breakdown__icon" aria-hidden="true">
+                {{
+                  block.settings.image
+                  | image_url: width: 64
+                  | image_tag: loading: 'lazy', widths: '32, 64', sizes: '28px', alt: ''
+                }}
+              </span>
+            {%- elsif block.settings.emoji != blank -%}
+              <span class="price-breakdown__icon" aria-hidden="true">{{ block.settings.emoji | escape }}</span>
+            {%- endif -%}
+            <span class="price-breakdown__label">{{ block.settings.label | escape }}</span>
+            <span class="price-breakdown__amount">{{ block.settings.amount | escape }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.callout != blank -%}
+      <div class="price-breakdown__callout rte">{{ section.settings.callout }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .price-breakdown {
+    background: var(--pb-bg);
+    padding: var(--pb-pad-top) 0 var(--pb-pad-bottom);
+  }
+
+  .price-breakdown .price-breakdown__inner {
+    max-width: 68rem;
+    box-sizing: content-box;
+  }
+
+  .price-breakdown .price-breakdown__inner > * {
+    box-sizing: border-box;
+  }
+
+  .price-breakdown__heading {
+    margin: 0 0 1.6rem;
+    color: var(--pb-heading);
+    font-size: clamp(2.8rem, 4.5vw, 3.8rem);
+    line-height: 1.15;
+  }
+
+  .price-breakdown__heading-accent {
+    color: var(--pb-accent);
+  }
+
+  .price-breakdown__text {
+    margin: 0 0 3.2rem;
+    color: var(--pb-text);
+    font-size: 1.6rem;
+    line-height: 1.7;
+  }
+
+  .price-breakdown__text p {
+    margin: 0;
+  }
+
+  .price-breakdown__list {
+    margin: 0 0 3.2rem;
+    padding: 0.8rem 2.8rem;
+    list-style: none;
+    background: var(--pb-box-bg);
+    border: 0.1rem solid var(--pb-box-border);
+    border-radius: 1.2rem;
+  }
+
+  .price-breakdown__row {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 2.2rem 0;
+    color: var(--pb-row-text);
+  }
+
+  .price-breakdown__row + .price-breakdown__row {
+    border-top: 0.1rem solid var(--pb-box-border);
+  }
+
+  .price-breakdown__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  .price-breakdown__icon img {
+    width: 2.8rem;
+    height: 2.8rem;
+    object-fit: contain;
+  }
+
+  .price-breakdown__label {
+    flex: 1;
+    font-family: var(--font-heading-family);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .price-breakdown__amount {
+    flex-shrink: 0;
+    color: var(--pb-accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .price-breakdown__callout {
+    padding: 2.4rem 2.8rem;
+    border-left: 0.4rem solid var(--pb-accent);
+    border-radius: 0.8rem;
+    background: var(--pb-callout-bg);
+    color: var(--pb-text);
+    font-size: 1.6rem;
+    line-height: 1.6;
+  }
+
+  .price-breakdown__callout p {
+    margin: 0;
+  }
+
+  .price-breakdown__callout strong {
+    color: var(--pb-heading);
+  }
+
+  @media screen and (max-width: 749px) {
+    .price-breakdown__list {
+      padding: 0.4rem 1.8rem;
+    }
+
+    .price-breakdown__row {
+      gap: 1.2rem;
+      padding: 1.8rem 0;
+    }
+
+    .price-breakdown__label,
+    .price-breakdown__amount {
+      font-size: 1.5rem;
+    }
+
+    .price-breakdown__callout {
+      padding: 2rem 2.2rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Price breakdown",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Use [price] to insert the current product price.",
+      "default": "Why is it only [price] per bottle?"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Heading accent",
+      "default": "(No catch.)"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>When you buy a designer perfume, you're not paying for better ingredients. You're paying for:</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "callout",
+      "label": "Callout",
+      "default": "<p>We stripped all of that away. <strong>You pay for the fragrance, not the marketing.</strong></p>"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "color", "id": "background", "label": "Background", "default": "#000000" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#cccccc" },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "info": "Heading accent, amounts and callout border.",
+      "default": "#ef776b"
+    },
+    { "type": "color", "id": "box_background", "label": "List background", "default": "#1a1a1a" },
+    { "type": "color", "id": "box_border_color", "label": "List border & dividers", "default": "#333333" },
+    { "type": "color", "id": "row_text_color", "label": "List text color", "default": "#ffffff" },
+    { "type": "color", "id": "callout_background", "label": "Callout background", "default": "#2a1a18" },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "cost",
+      "name": "Cost row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji icon",
+          "default": "🎤"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom icon image",
+          "info": "Replaces the emoji."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Celebrity endorsements"
+        },
+        {
+          "type": "text",
+          "id": "amount",
+          "label": "Amount",
+          "default": "~€80"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Price breakdown",
+      "blocks": [
+        { "type": "cost", "settings": { "emoji": "🎤", "label": "Celebrity endorsements", "amount": "~€80" } },
+        { "type": "cost", "settings": { "emoji": "🏬", "label": "Retail markups", "amount": "~€120" } },
+        { "type": "cost", "settings": { "emoji": "📣", "label": "Marketing & distribution", "amount": "~€110" } },
+        { "type": "cost", "settings": { "emoji": "🧪", "label": "Actual fragrance ingredients", "amount": "~€40" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

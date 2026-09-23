@@ -128,7 +128,7 @@
     "show_cart_note": true,
     "cart_drawer_collection": "",
     "cart_color_scheme": "background-1",
-    "cart_upsell_collection": "bestsellers",
+    "cart_upsell_collection": "pheromone-perfumes",
     "checkout_logo_image": "shopify://shop_images/Scherm_afbeelding_2024-02-04_om_07.45.02.png",
     "checkout_logo_position": "center",
     "checkout_logo_size": "large",

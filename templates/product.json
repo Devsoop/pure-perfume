@@ -225,6 +225,7 @@
         "review_5",
         "review_6"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Why 50,000+ others are fans",
         "heading_line_2": "",
@@ -281,6 +282,7 @@
         "result_2",
         "result_3"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Customer results & ratings",
         "subheading": "Real feedback from people who switched to Pure Parfum.",
@@ -290,6 +292,183 @@
         "text_color": "#444444",
         "padding_top": 48,
         "padding_bottom": 48
+      }
+    },
+    "longevity_test": {
+      "type": "longevity-test",
+      "blocks": {
+        "bar_1": {
+          "type": "bar",
+          "settings": {
+            "name": "Drugstore body spray",
+            "subtext": "1–3% oil concentration",
+            "value": "1–2 hrs",
+            "fill": 15,
+            "highlight": false,
+            "badge": "Winner ✓"
+          }
+        },
+        "bar_2": {
+          "type": "bar",
+          "settings": {
+            "name": "Designer perfume",
+            "subtext": "5–10% oil concentration",
+            "value": "2–3 hrs",
+            "fill": 40,
+            "highlight": false,
+            "badge": "Winner ✓"
+          }
+        },
+        "bar_3": {
+          "type": "bar",
+          "settings": {
+            "name": "Pure Parfum",
+            "subtext": "High oil concentration",
+            "value": "12+ hrs",
+            "fill": 100,
+            "highlight": true,
+            "badge": "Winner ✓"
+          }
+        },
+        "callout": {
+          "type": "callout",
+          "settings": {
+            "text": "<p>Our scents last <strong>6× longer</strong> than drugstore sprays and <strong>2–3× longer</strong> than designer colognes.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "bar_1",
+        "bar_2",
+        "bar_3",
+        "callout"
+      ],
+      "settings": {
+        "background": "#ffffff",
+        "heading_color": "#000000",
+        "text_color": "#666666",
+        "accent_color": "#ef776b",
+        "card_background": "#000000",
+        "card_text_color": "#ffffff",
+        "card_muted_color": "#aaaaaa",
+        "bar_color": "#666666",
+        "button_text_color": "#ffffff",
+        "heading": "One spray. Twelve hours.",
+        "heading_accent": "Guaranteed.",
+        "text": "<p>Crafted with a high oil concentration — <strong>the highest in its class</strong> — so one spray in the morning keeps you smelling great well past midnight.</p>",
+        "card_label": "The longevity test",
+        "button_label": "Try risk free now",
+        "button_link": "",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "price_breakdown": {
+      "type": "price-breakdown",
+      "blocks": {
+        "cost_1": {
+          "type": "cost",
+          "settings": {
+            "emoji": "🎤",
+            "label": "Celebrity endorsements",
+            "amount": "~€80"
+          }
+        },
+        "cost_2": {
+          "type": "cost",
+          "settings": {
+            "emoji": "🏬",
+            "label": "Retail markups",
+            "amount": "~€120"
+          }
+        },
+        "cost_3": {
+          "type": "cost",
+          "settings": {
+            "emoji": "📣",
+            "label": "Marketing & distribution",
+            "amount": "~€110"
+          }
+        },
+        "cost_4": {
+          "type": "cost",
+          "settings": {
+            "emoji": "🧪",
+            "label": "Actual fragrance ingredients",
+            "amount": "~€40"
+          }
+        }
+      },
+      "block_order": [
+        "cost_1",
+        "cost_2",
+        "cost_3",
+        "cost_4"
+      ],
+      "settings": {
+        "heading": "Why is it only [price] per bottle?",
+        "heading_accent": "(No catch.)",
+        "text": "<p>When you buy a designer perfume, you're not paying for better ingredients. You're paying for:</p>",
+        "callout": "<p>We stripped all of that away. <strong>You pay for the fragrance, not the marketing.</strong></p>",
+        "background": "#000000",
+        "heading_color": "#ffffff",
+        "text_color": "#cccccc",
+        "accent_color": "#ef776b",
+        "box_background": "#1a1a1a",
+        "box_border_color": "#333333",
+        "row_text_color": "#ffffff",
+        "callout_background": "#2a1a18",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "product_mechanism": {
+      "type": "product-mechanism",
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "icon": "molecule",
+            "title": "Bonds to your skin",
+            "text": "The high concentration of perfume oil keeps the scent on your skin for longer."
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "icon": "clock",
+            "title": "8+ hours of lasting power",
+            "text": "Instead of fading after 1 to 2 hours, the scent releases gradually, all day long."
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "icon": "drop",
+            "title": "Skin-friendly formula",
+            "text": "Suitable for daily use and dermatologically tested."
+          }
+        }
+      },
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3"
+      ],
+      "settings": {
+        "video": "shopify://files/videos/84c3793c46884517b0b5f9f907e37d7f.HD-720p-4.5Mbps-94947689.mp4",
+        "video_url": "",
+        "media_position": "left",
+        "mobile_media_ratio": "landscape",
+        "media_bg": "#F7F7F7",
+        "eyebrow": "OUR FORMULA:",
+        "heading": "Made to last. Here's why.",
+        "description": "<p>Most fragrances fade within 1 to 2 hours. Thanks to 20% perfume oil, our scent bonds to your skin and releases slowly, hour after hour.</p>",
+        "accent_color": "#A43C3F",
+        "icon_bg_color": "#E3BDBE",
+        "heading_color": "#111111",
+        "padding_top": 40,
+        "padding_bottom": 40
       }
     },
     "compare": {
@@ -364,6 +543,7 @@
         "row_5",
         "row_6"
       ],
+      "disabled": true,
       "settings": {
         "heading": "How We Compare",
         "us_eyebrow": "THE",
@@ -539,6 +719,9 @@
     "sticky_atc",
     "reviews_testimonials",
     "customer_results",
+    "longevity_test",
+    "price_breakdown",
+    "product_mechanism",
     "compare",
     "loox_reviews",
     "faq",
